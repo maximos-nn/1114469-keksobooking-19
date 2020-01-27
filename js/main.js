@@ -84,7 +84,7 @@ function createMocks() {
   return adverts;
 }
 
-function renderPin(advert) {
+function createPin(advert) {
   var pinElement = pinTemplate.cloneNode(true);
   var img = pinElement.querySelector('img');
   pinElement.style.left = (advert.location.x + PIN_OFFSET_X) + 'px';
@@ -94,13 +94,14 @@ function renderPin(advert) {
   return pinElement;
 }
 
+function renderPins(container, adverts) {
+  adverts.forEach(function (advert) {
+    container.appendChild(createPin(advert));
+  });
+}
+
 function showAdverts() {
-  var adverts = createMocks();
-  var fragment = document.createDocumentFragment();
-  for (var i = 0; i < adverts.length; i++) {
-    fragment.appendChild(renderPin(adverts[i]));
-  }
-  mapPins.appendChild(fragment);
+  renderPins(mapPins, createMocks());
   map.classList.remove('map--faded');
 }
 
