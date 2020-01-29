@@ -5,7 +5,7 @@ var PIN_OFFSET_X = -25;
 var PIN_OFFSET_Y = -70;
 var PIN_MIN_Y = 130;
 var PIN_MAX_Y = 630;
-var TYPES = ['palace', 'flat', 'house', 'bungalo'];
+var TYPES = {'palace': 'Дворец', 'flat': 'Квартира', 'house': 'Дом', 'bungalo': 'Бунгало'};
 var TIMES = ['12:00', '13:00', '14:00'];
 var FEATURES = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
 var PHOTOS = [
@@ -17,6 +17,7 @@ var PHOTOS = [
 var map = document.querySelector('.map');
 var mapPins = map.querySelector('.map__pins');
 var pinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
+var cardTemplate = document.querySelector('#card').content.querySelector('.map__card');
 
 function getRandomInt(min, max) {
   min = Math.ceil(min);
@@ -55,7 +56,7 @@ function getRandomSubarray(array) {
   return shuffleArray(array.slice()).slice(getRandomInt(0, array.length));
 }
 
-function createMocks() {
+function createAdverts() {
   var adverts = [];
   for (var i = 0; i < MOCKS_COUNT; i++) {
     var advert = {
@@ -64,9 +65,9 @@ function createMocks() {
         'title': 'title' + (i + 1),
         'address': '',
         'price': getRandomIntInclusive(500, 1000),
-        'type': getRandomElement(TYPES),
+        'type': getRandomElement(Object.keys(TYPES)),
         'rooms': getRandomIntInclusive(1, 4),
-        'guests': getRandomIntInclusive(0, 5),
+        'guests': getRandomIntInclusive(1, 5),
         'checkin': getRandomElement(TIMES),
         'checkout': getRandomElement(TIMES),
         'features': getRandomSubarray(FEATURES),
@@ -100,9 +101,40 @@ function renderPins(container, adverts) {
   });
 }
 
-function showAdverts() {
-  renderPins(mapPins, createMocks());
+function showData() {
+  var ads = createAdverts();
+  renderPins(mapPins, ads);
   map.classList.remove('map--faded');
+  map.insertBefore(createCard(ads[0]), map.querySelector('.map__filters-container'));
 }
 
-showAdverts();
+function renderFeatures(container, features) {
+  container.innerHTML = '';
+  features.forEach(function (item) {
+    container.innerHTML += '<li class="popup__feature popup__feature--' + item + '"></li>';
+  });
+}
+
+function renderPhotos(container, photos) {
+  container.innerHTML = '';
+  photos.forEach(function (item) {
+    container.innerHTML += '<img src="' + item + '" class="popup__photo" width="45" height="40" alt="Фотография жилья">';
+  });
+}
+
+function createCard(advert) {
+  var cardElement = cardTemplate.cloneNode(true);
+  cardElement.querySelector('.popup__title').textContent = advert.offer.title;
+  cardElement.querySelector('.popup__text--address').textContent = advert.offer.address;
+  cardElement.querySelector('.popup__text--price').innerHTML = advert.offer.price + ' ₽<span>/ночь</span>';
+  cardElement.querySelector('.popup__type').textContent = TYPES[advert.offer.type];
+  cardElement.querySelector('.popup__text--capacity').textContent = advert.offer.rooms + ' комнаты для ' + advert.offer.guests + ' гостей';
+  cardElement.querySelector('.popup__text--time').textContent = 'Заезд после ' + advert.offer.checkin + ', выезд до ' + advert.offer.checkout;
+  cardElement.querySelector('.popup__description').textContent = advert.offer.description;
+  cardElement.querySelector('.popup__avatar').src = advert.author.avatar;
+  renderFeatures(cardElement.querySelector('.popup__features'), advert.offer.features);
+  renderPhotos(cardElement.querySelector('.popup__photos'), advert.offer.photos);
+  return cardElement;
+}
+
+showData();
