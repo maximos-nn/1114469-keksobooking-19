@@ -14,7 +14,7 @@ var PHOTOS = [
   'http://o0.github.io/assets/images/tokyo/hotel3.jpg'
 ];
 var ENTER_KEY = 'Enter';
-var PIN_NIB_HEIGHT = 22;
+var PIN_NIB_HEIGHT = 16;
 var MAIN_MOUSE_BUTTON = 0;
 var ROOMS_FOR_GUESTS = {
   '1': ['1'],
