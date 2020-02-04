@@ -120,7 +120,6 @@ function renderPins(container, adverts) {
 function showData() {
   var ads = createAdverts();
   renderPins(mapPins, ads);
-  map.classList.remove('map--faded');
   map.insertBefore(createCard(ads[0]), map.querySelector('.map__filters-container'));
 }
 
