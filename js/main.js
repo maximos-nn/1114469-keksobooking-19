@@ -200,11 +200,11 @@ function onCustomPinEnterKey(evt) {
 function getCustomPinAddress() {
   var width = customPin.offsetWidth;
   var height = customPin.offsetHeight;
-  var x = customPin.offsetLeft + width / 2;
+  var x = Math.floor(customPin.offsetLeft + width / 2);
   if (!isPageActive) {
-    return x + ', ' + (customPin.offsetTop + height / 2);
+    return x + ', ' + Math.floor(customPin.offsetTop + height / 2);
   }
-  return x + ', ' + (customPin.offsetTop + height + PIN_NIB_HEIGHT);
+  return x + ', ' + Math.floor(customPin.offsetTop + height + PIN_NIB_HEIGHT);
 }
 
 function validateGuests() {
