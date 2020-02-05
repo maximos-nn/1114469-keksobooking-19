@@ -172,14 +172,14 @@ function toggleFilters(active) {
 }
 
 function togglePage(active) {
-  toggleForm(active);
-  toggleFilters(active);
   if (active) {
     map.classList.remove('map--faded');
     showData();
   } else {
     map.classList.add('map--faded');
   }
+  toggleFilters(active);
+  toggleForm(active);
 }
 
 function onCustomPinMousedown(evt) {
@@ -227,9 +227,9 @@ function onRoomSelectChange() {
   validateGuests();
 }
 
-togglePage(isPageActive);
-validateGuests();
 addressField.value = getCustomPinAddress();
 customPin.addEventListener('mousedown', onCustomPinMousedown);
 customPin.addEventListener('keydown', onCustomPinEnterKey);
 rooms.addEventListener('change', onRoomSelectChange);
+togglePage(isPageActive);
+validateGuests();
