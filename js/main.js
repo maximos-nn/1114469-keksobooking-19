@@ -13,11 +13,27 @@ var PHOTOS = [
   'http://o0.github.io/assets/images/tokyo/hotel2.jpg',
   'http://o0.github.io/assets/images/tokyo/hotel3.jpg'
 ];
+var ENTER_KEY = 'Enter';
+var PIN_NIB_HEIGHT = 16;
+var MAIN_MOUSE_BUTTON = 0;
+var ROOMS_FOR_GUESTS = {
+  '1': ['1'],
+  '2': ['2', '1'],
+  '3': ['3', '2', '1'],
+  '100': ['0']
+};
 
 var map = document.querySelector('.map');
 var mapPins = map.querySelector('.map__pins');
+var customPin = mapPins.querySelector('.map__pin--main');
 var pinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
 var cardTemplate = document.querySelector('#card').content.querySelector('.map__card');
+var advertForm = document.querySelector('.ad-form');
+var addressField = advertForm.querySelector('#address');
+var rooms = advertForm.querySelector('#room_number');
+var guests = advertForm.querySelector('#capacity');
+var filters = map.querySelector('.map__filters');
+var isPageActive = false;
 
 function getRandomInt(min, max) {
   min = Math.ceil(min);
@@ -104,7 +120,6 @@ function renderPins(container, adverts) {
 function showData() {
   var ads = createAdverts();
   renderPins(mapPins, ads);
-  map.classList.remove('map--faded');
   map.insertBefore(createCard(ads[0]), map.querySelector('.map__filters-container'));
 }
 
@@ -137,4 +152,84 @@ function createCard(advert) {
   return cardElement;
 }
 
-showData();
+function toggleForm(active) {
+  var sets = advertForm.querySelectorAll('fieldset');
+  for (var i = 0; i < sets.length; i++) {
+    sets[i].disabled = !active;
+  }
+  if (active) {
+    advertForm.classList.remove('ad-form--disabled');
+  } else {
+    advertForm.classList.add('ad-form--disabled');
+  }
+}
+
+function toggleFilters(active) {
+  var controls = filters.querySelectorAll('select, fieldset');
+  for (var i = 0; i < controls.length; i++) {
+    controls[i].disabled = !active;
+  }
+}
+
+function togglePage(active) {
+  if (active) {
+    map.classList.remove('map--faded');
+    showData();
+  } else {
+    map.classList.add('map--faded');
+  }
+  toggleFilters(active);
+  toggleForm(active);
+}
+
+function onCustomPinMousedown(evt) {
+  if (evt.button === MAIN_MOUSE_BUTTON && !isPageActive) {
+    isPageActive = true;
+    togglePage(isPageActive);
+    addressField.value = getCustomPinAddress();
+  }
+}
+
+function onCustomPinEnterKey(evt) {
+  if (evt.key === ENTER_KEY && !isPageActive) {
+    isPageActive = true;
+    togglePage(isPageActive);
+  }
+}
+
+function getCustomPinAddress() {
+  var width = customPin.offsetWidth;
+  var height = customPin.offsetHeight;
+  var x = Math.floor(customPin.offsetLeft + width / 2);
+  if (!isPageActive) {
+    return x + ', ' + Math.floor(customPin.offsetTop + height / 2);
+  }
+  return x + ', ' + Math.floor(customPin.offsetTop + height + PIN_NIB_HEIGHT);
+}
+
+function validateGuests() {
+  var validGuestsOptions = ROOMS_FOR_GUESTS[rooms.value];
+  var guestsOptions = guests.querySelectorAll('option');
+  guestsOptions.forEach(function (currentOption) {
+    currentOption.disabled = true;
+    currentOption.selected = false;
+    var index = validGuestsOptions.indexOf(currentOption.value);
+    if (index >= 0) {
+      currentOption.disabled = false;
+      if (index === 0) {
+        currentOption.selected = true;
+      }
+    }
+  });
+}
+
+function onRoomSelectChange() {
+  validateGuests();
+}
+
+addressField.value = getCustomPinAddress();
+customPin.addEventListener('mousedown', onCustomPinMousedown);
+customPin.addEventListener('keydown', onCustomPinEnterKey);
+rooms.addEventListener('change', onRoomSelectChange);
+togglePage(isPageActive);
+validateGuests();
