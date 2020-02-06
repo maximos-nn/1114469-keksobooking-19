@@ -5,7 +5,12 @@ var PIN_OFFSET_X = -25;
 var PIN_OFFSET_Y = -70;
 var PIN_MIN_Y = 130;
 var PIN_MAX_Y = 630;
-var TYPES = {'palace': 'Дворец', 'flat': 'Квартира', 'house': 'Дом', 'bungalo': 'Бунгало'};
+var HOUSING = {
+  'palace': {title: 'Дворец', minPrice: 10000},
+  'flat': {title: 'Квартира', minPrice: 1000},
+  'house': {title: 'Дом', minPrice: 5000},
+  'bungalo': {title: 'Бунгало', minPrice: 0}
+};
 var TIMES = ['12:00', '13:00', '14:00'];
 var FEATURES = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
 var PHOTOS = [
@@ -14,6 +19,7 @@ var PHOTOS = [
   'http://o0.github.io/assets/images/tokyo/hotel3.jpg'
 ];
 var ENTER_KEY = 'Enter';
+var ESC_KEY = 'Escape';
 var PIN_NIB_HEIGHT = 16;
 var MAIN_MOUSE_BUTTON = 0;
 var ROOMS_FOR_GUESTS = {
@@ -32,6 +38,10 @@ var advertForm = document.querySelector('.ad-form');
 var addressField = advertForm.querySelector('#address');
 var rooms = advertForm.querySelector('#room_number');
 var guests = advertForm.querySelector('#capacity');
+var timeIn = advertForm.querySelector('#timein');
+var timeOut = advertForm.querySelector('#timeout');
+var housingType = advertForm.querySelector('#type');
+var minPrice = advertForm.querySelector('#price');
 var filters = map.querySelector('.map__filters');
 var isPageActive = false;
 
@@ -81,7 +91,7 @@ function createAdverts() {
         'title': 'title' + (i + 1),
         'address': '',
         'price': getRandomIntInclusive(500, 1000),
-        'type': getRandomElement(Object.keys(TYPES)),
+        'type': getRandomElement(Object.keys(HOUSING)),
         'rooms': getRandomIntInclusive(1, 4),
         'guests': getRandomIntInclusive(1, 5),
         'checkin': getRandomElement(TIMES),
@@ -108,6 +118,14 @@ function createPin(advert) {
   pinElement.style.top = (advert.location.y + PIN_OFFSET_Y) + 'px';
   img.src = advert.author.avatar;
   img.alt = advert.offer.title;
+  pinElement.addEventListener('click', function () {
+    showCard(advert);
+  });
+  pinElement.addEventListener('keydown', function (evt) {
+    if (evt.key === ENTER_KEY) {
+      showCard(advert);
+    }
+  });
   return pinElement;
 }
 
@@ -120,7 +138,26 @@ function renderPins(container, adverts) {
 function showData() {
   var ads = createAdverts();
   renderPins(mapPins, ads);
-  map.insertBefore(createCard(ads[0]), map.querySelector('.map__filters-container'));
+}
+
+function onCardEscPress(evt) {
+  if (evt.key === ESC_KEY) {
+    closeCard();
+  }
+}
+
+function showCard(advert) {
+  closeCard();
+  map.insertBefore(createCard(advert), map.querySelector('.map__filters-container'));
+  document.addEventListener('keydown', onCardEscPress);
+}
+
+function closeCard() {
+  var card = map.querySelector('.map__card');
+  if (card) {
+    card.remove();
+    document.removeEventListener('keydown', onCardEscPress);
+  }
 }
 
 function renderFeatures(container, features) {
@@ -142,13 +179,16 @@ function createCard(advert) {
   cardElement.querySelector('.popup__title').textContent = advert.offer.title;
   cardElement.querySelector('.popup__text--address').textContent = advert.offer.address;
   cardElement.querySelector('.popup__text--price').innerHTML = advert.offer.price + ' ₽<span>/ночь</span>';
-  cardElement.querySelector('.popup__type').textContent = TYPES[advert.offer.type];
+  cardElement.querySelector('.popup__type').textContent = HOUSING[advert.offer.type].title;
   cardElement.querySelector('.popup__text--capacity').textContent = advert.offer.rooms + ' комнаты для ' + advert.offer.guests + ' гостей';
   cardElement.querySelector('.popup__text--time').textContent = 'Заезд после ' + advert.offer.checkin + ', выезд до ' + advert.offer.checkout;
   cardElement.querySelector('.popup__description').textContent = advert.offer.description;
   cardElement.querySelector('.popup__avatar').src = advert.author.avatar;
   renderFeatures(cardElement.querySelector('.popup__features'), advert.offer.features);
   renderPhotos(cardElement.querySelector('.popup__photos'), advert.offer.photos);
+  cardElement.querySelector('.popup__close').addEventListener('click', function () {
+    cardElement.remove();
+  });
   return cardElement;
 }
 
@@ -227,9 +267,40 @@ function onRoomSelectChange() {
   validateGuests();
 }
 
+function validateCheckTimes(isTimeIn) {
+  if (isTimeIn) {
+    timeOut.value = timeIn.value;
+  } else {
+    timeIn.value = timeOut.value;
+  }
+}
+
+function onTimeInChange() {
+  validateCheckTimes(true);
+}
+
+function onTimeOutChange() {
+  validateCheckTimes(false);
+}
+
+function validateMinPrice() {
+  var price = HOUSING[housingType.value].minPrice;
+  minPrice.min = price;
+  minPrice.placeholder = price;
+}
+
+function onHousingTypeChange() {
+  validateMinPrice();
+}
+
 addressField.value = getCustomPinAddress();
 customPin.addEventListener('mousedown', onCustomPinMousedown);
 customPin.addEventListener('keydown', onCustomPinEnterKey);
 rooms.addEventListener('change', onRoomSelectChange);
+timeIn.addEventListener('change', onTimeInChange);
+timeOut.addEventListener('change', onTimeOutChange);
+housingType.addEventListener('change', onHousingTypeChange);
 togglePage(isPageActive);
 validateGuests();
+validateCheckTimes(true);
+validateMinPrice();
