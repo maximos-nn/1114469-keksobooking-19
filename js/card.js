@@ -1,7 +1,6 @@
 'use strict';
 
 (function () {
-  var ESC_KEY = 'Escape';
   var cardTemplate = document.querySelector('#card').content.querySelector('.map__card');
   var map;
 
@@ -38,7 +37,7 @@
   }
 
   function onCardEscPress(evt) {
-    if (evt.key === ESC_KEY) {
+    if (evt.key === window.utils.const.ESC_KEY) {
       closeCard();
     }
   }

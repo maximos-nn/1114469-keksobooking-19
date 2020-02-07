@@ -32,6 +32,11 @@
     return shuffleArray(array.slice()).slice(getRandomInt(0, array.length));
   }
   window.utils = {
+    const: {
+      ESC_KEY: 'Escape',
+      ENTER_KEY: 'Enter',
+      MAIN_MOUSE_BUTTON: 0
+    },
     getRandomIntInclusive: getRandomIntInclusive,
     getRandomElement: getRandomElement,
     getRandomSubarray: getRandomSubarray

@@ -3,7 +3,6 @@
 (function () {
   var PIN_OFFSET_X = -25;
   var PIN_OFFSET_Y = -70;
-  var ENTER_KEY = 'Enter';
   var PIN_NIB_HEIGHT = 16;
 
   var pinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
@@ -24,7 +23,7 @@
       window.showCard(map, advert);
     });
     pinElement.addEventListener('keydown', function (evt) {
-      if (evt.key === ENTER_KEY) {
+      if (evt.key === window.utils.const.ENTER_KEY) {
         window.showCard(map, advert);
       }
     });
