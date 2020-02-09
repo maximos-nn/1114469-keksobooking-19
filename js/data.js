@@ -2,8 +2,6 @@
 
 (function () {
   var MOCKS_COUNT = 8;
-  var PIN_MIN_Y = 130;
-  var PIN_MAX_Y = 630;
   var HOUSING = {
     'palace': {title: 'Дворец', minPrice: 10000},
     'flat': {title: 'Квартира', minPrice: 1000},
@@ -17,8 +15,6 @@
     'http://o0.github.io/assets/images/tokyo/hotel2.jpg',
     'http://o0.github.io/assets/images/tokyo/hotel3.jpg'
   ];
-
-  var mapPins = document.querySelector('.map__pins');
 
   function createAdverts() {
     var adverts = [];
@@ -39,8 +35,8 @@
           'photos': window.utils.getRandomSubarray(PHOTOS)
         },
         'location': {
-          x: window.utils.getRandomIntInclusive(0, mapPins.offsetWidth),
-          y: window.utils.getRandomIntInclusive(PIN_MIN_Y, PIN_MAX_Y)
+          x: window.utils.getRandomIntInclusive(window.map.MIN_X, window.map.MAX_X),
+          y: window.utils.getRandomIntInclusive(window.map.MIN_Y, window.map.MAX_Y)
         }
       };
       advert.offer.address = advert.location.x + ', ' + advert.location.y;
