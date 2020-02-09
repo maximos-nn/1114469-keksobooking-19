@@ -84,5 +84,8 @@
   validateCheckTimes(true);
   validateMinPrice();
 
-  window.toggleForm = toggleForm;
+  window.form = {
+    toggleForm: toggleForm,
+    addressField: addressField
+  };
 })();

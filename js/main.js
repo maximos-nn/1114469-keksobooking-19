@@ -21,11 +21,12 @@
 
   function togglePage(active) {
     window.map.toggleMap(active);
-    window.toggleForm(active);
+    window.form.toggleForm(active);
   }
 
   customPin.addEventListener('mousedown', onCustomPinMousedown);
   customPin.addEventListener('keydown', onCustomPinEnterKey);
+  window.pinSetDragHandler(customPin);
 
   togglePage(isPageActive);
 })();
