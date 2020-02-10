@@ -36,7 +36,9 @@
 
   function renderPins(container, adverts) {
     adverts.forEach(function (advert) {
-      container.appendChild(createPin(advert));
+      if ('offer' in advert) {
+        container.appendChild(createPin(advert));
+      }
     });
   }
 
@@ -48,14 +50,18 @@
   }
 
   function toggleMap(active) {
-    isMapActive = active;
     if (active) {
-      map.classList.remove('map--faded');
-      renderPins(mapPins, window.data.createAdverts());
+      window.data.createAdverts(function (adverts) {
+        isMapActive = active;
+        map.classList.remove('map--faded');
+        renderPins(mapPins, adverts);
+        toggleFilters(active);
+      });
     } else {
+      isMapActive = active;
       map.classList.add('map--faded');
+      toggleFilters(active);
     }
-    toggleFilters(active);
   }
 
   function getCustomPinCoordsFromTopLeft(top, left) {
