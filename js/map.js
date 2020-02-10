@@ -50,18 +50,14 @@
   }
 
   function toggleMap(active) {
+    isMapActive = active;
     if (active) {
-      window.data.createAdverts(function (adverts) {
-        isMapActive = active;
-        map.classList.remove('map--faded');
-        renderPins(mapPins, adverts);
-        toggleFilters(active);
-      });
+      map.classList.remove('map--faded');
+      renderPins(mapPins, window.data.getAdverts());
     } else {
-      isMapActive = active;
       map.classList.add('map--faded');
-      toggleFilters(active);
     }
+    toggleFilters(active);
   }
 
   function getCustomPinCoordsFromTopLeft(top, left) {

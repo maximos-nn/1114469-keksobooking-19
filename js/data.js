@@ -7,10 +7,12 @@
     'house': {title: 'Дом', minPrice: 5000},
     'bungalo': {title: 'Бунгало', minPrice: 0}
   };
+  var adverts = [];
 
   function getAdvertsLoadSuccessHandler(onAdvertsCreated) {
-    return function (adverts) {
-      onAdvertsCreated(adverts);
+    return function (data) {
+      adverts = data;
+      onAdvertsCreated();
     };
   }
 
@@ -20,6 +22,10 @@
 
   function createAdverts(onDone) {
     window.backend.load(getAdvertsLoadSuccessHandler(onDone), onAdvertsLoadError);
+  }
+
+  function getAdverts() {
+    return adverts;
   }
 
   function getPrice(housing) {
@@ -32,6 +38,7 @@
 
   window.data = {
     createAdverts: createAdverts,
+    getAdverts: getAdverts,
     getPrice: getPrice,
     getTitle: getTitle
   };

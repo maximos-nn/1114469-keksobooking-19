@@ -24,9 +24,10 @@
     window.form.toggleForm(active);
   }
 
-  customPin.addEventListener('mousedown', onCustomPinMousedown);
-  customPin.addEventListener('keydown', onCustomPinEnterKey);
-  window.pinSetDragHandler(customPin);
-
   togglePage(isPageActive);
+  window.data.createAdverts(function () {
+    customPin.addEventListener('mousedown', onCustomPinMousedown);
+    customPin.addEventListener('keydown', onCustomPinEnterKey);
+    window.pinSetDragHandler(customPin);
+  });
 })();
