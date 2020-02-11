@@ -11,7 +11,6 @@
 
   function startApp() {
     isAppActive = true;
-    window.pinSetDragHandler(customPin);
     togglePage(isAppActive);
   }
 
@@ -35,6 +34,7 @@
     togglePage(isAppActive);
     customPin.addEventListener('mousedown', onCustomPinMousedown);
     customPin.addEventListener('keydown', onCustomPinEnterKey);
+    window.pinSetDragHandler(customPin);
   }
 
   initApp();
