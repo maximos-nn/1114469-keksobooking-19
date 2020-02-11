@@ -3,7 +3,7 @@
 (function () {
   var URL_UPLOAD = 'https://js.dump.academy/keksobooking';
   var URL_DOWNLOAD = 'https://js.dump.academy/keksobooking/data';
-  var TIMEOUT_IN_MS = 2000;
+  var TIMEOUT_IN_MS = 5000;
   var statusCode = {OK: 200};
 
   function getRequestObject(onLoad, onError) {

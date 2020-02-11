@@ -16,6 +16,13 @@
   var isMapActive = false;
   var PIN_MAX_X = mapPins.offsetWidth - 1;
 
+  function setPinActive(currentPin) {
+    mapPins.querySelectorAll('.map__pin').forEach(function (pin) {
+      pin.classList.remove('map__pin--active');
+    });
+    currentPin.classList.add('map__pin--active');
+  }
+
   function createPin(advert) {
     var pinElement = pinTemplate.cloneNode(true);
     var img = pinElement.querySelector('img');
@@ -23,11 +30,13 @@
     pinElement.style.top = (advert.location.y + PIN_OFFSET_Y) + 'px';
     img.src = advert.author.avatar;
     img.alt = advert.offer.title;
-    pinElement.addEventListener('click', function () {
+    pinElement.addEventListener('click', function (evt) {
+      setPinActive(evt.currentTarget);
       window.showCard(map, advert);
     });
     pinElement.addEventListener('keydown', function (evt) {
       if (evt.key === window.utils.const.ENTER_KEY) {
+        setPinActive(evt.currentTarget);
         window.showCard(map, advert);
       }
     });
