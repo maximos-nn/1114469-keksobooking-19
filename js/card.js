@@ -5,6 +5,10 @@
   var map;
 
   function renderFeatures(container, features) {
+    if (!Array.isArray(features) || features.length === 0) {
+      container.remove();
+      return;
+    }
     container.innerHTML = '';
     features.forEach(function (item) {
       container.innerHTML += '<li class="popup__feature popup__feature--' + item + '"></li>';
@@ -12,6 +16,10 @@
   }
 
   function renderPhotos(container, photos) {
+    if (!Array.isArray(photos) || photos.length === 0) {
+      container.remove();
+      return;
+    }
     container.innerHTML = '';
     photos.forEach(function (item) {
       container.innerHTML += '<img src="' + item + '" class="popup__photo" width="45" height="40" alt="Фотография жилья">';
@@ -31,7 +39,7 @@
     renderFeatures(cardElement.querySelector('.popup__features'), advert.offer.features);
     renderPhotos(cardElement.querySelector('.popup__photos'), advert.offer.photos);
     cardElement.querySelector('.popup__close').addEventListener('click', function () {
-      cardElement.remove();
+      closeCard();
     });
     return cardElement;
   }
