@@ -11,7 +11,6 @@
 
   function startApp() {
     isAppActive = true;
-    window.pinSetDragHandler(customPin);
     togglePage(isAppActive);
   }
 
@@ -31,10 +30,18 @@
     }
   }
 
+  function onSuccessFormSubmit() {
+    isAppActive = false;
+    togglePage(isAppActive);
+    window.map.resetMap();
+  }
+
   function initApp() {
     togglePage(isAppActive);
     customPin.addEventListener('mousedown', onCustomPinMousedown);
     customPin.addEventListener('keydown', onCustomPinEnterKey);
+    window.pinSetDragHandler(customPin);
+    window.form.setSuccessFormUploadCb(onSuccessFormSubmit);
   }
 
   initApp();

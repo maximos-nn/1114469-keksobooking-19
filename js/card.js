@@ -65,5 +65,8 @@
     document.addEventListener('keydown', onCardEscPress);
   }
 
-  window.showCard = showCard;
+  window.card = {
+    showCard: showCard,
+    closeCard: closeCard
+  };
 })();
