@@ -32,8 +32,8 @@
 
   function onSuccessFormSubmit() {
     isAppActive = false;
-    window.map.resetMap();
     togglePage(isAppActive);
+    window.map.resetMap();
   }
 
   function initApp() {

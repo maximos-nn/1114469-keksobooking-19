@@ -31,6 +31,7 @@
     });
     customPin.style.left = MAIN_PIN_DEFAULT_LEFT;
     customPin.style.top = MAIN_PIN_DEFAULT_TOP;
+    window.form.addressField.value = getCustomPinAddress();
   }
 
   function createPin(advert) {
