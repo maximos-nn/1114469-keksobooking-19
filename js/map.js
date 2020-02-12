@@ -26,6 +26,7 @@
   }
 
   function resetMap() {
+    window.card.closeCard();
     mapPins.querySelectorAll('.map__pin:not(.map__pin--main)').forEach(function (pin) {
       pin.remove();
     });
@@ -43,12 +44,12 @@
     img.alt = advert.offer.title;
     pinElement.addEventListener('click', function (evt) {
       setPinActive(evt.currentTarget);
-      window.showCard(map, advert);
+      window.card.showCard(map, advert);
     });
     pinElement.addEventListener('keydown', function (evt) {
       if (evt.key === window.utils.const.ENTER_KEY) {
         setPinActive(evt.currentTarget);
-        window.showCard(map, advert);
+        window.card.showCard(map, advert);
       }
     });
     return pinElement;

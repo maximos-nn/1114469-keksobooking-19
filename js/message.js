@@ -19,8 +19,14 @@
       }
     }
 
+    function onWindowClick() {
+      closeMessage();
+      document.removeEventListener('click', onWindowClick);
+    }
+
     main.insertAdjacentElement('afterbegin', messageElement);
     document.addEventListener('keydown', onMessageEscPress);
+    document.addEventListener('click', onWindowClick);
   }
 
   function showTransferError(message) {
@@ -38,12 +44,18 @@
       }
     }
 
+    function onWindowClick() {
+      closeMessage();
+      document.removeEventListener('click', onWindowClick);
+    }
+
     button.addEventListener('click', function () {
       closeMessage();
     });
     messageElement.querySelector('.error__message').textContent = message;
     main.insertAdjacentElement('afterbegin', messageElement);
     document.addEventListener('keydown', onMessageEscPress);
+    document.addEventListener('click', onWindowClick);
   }
 
   window.message = {
