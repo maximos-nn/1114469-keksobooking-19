@@ -7,6 +7,8 @@
   var PIN_MIN_Y = 130;
   var PIN_MAX_Y = 630;
   var PIN_MIN_X = 0;
+  var MAIN_PIN_DEFAULT_LEFT = '570px';
+  var MAIN_PIN_DEFAULT_TOP = '375px';
 
   var pinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
   var map = document.querySelector('.map');
@@ -17,10 +19,18 @@
   var PIN_MAX_X = mapPins.offsetWidth - 1;
 
   function setPinActive(currentPin) {
-    mapPins.querySelectorAll('.map__pin').forEach(function (pin) {
+    mapPins.querySelectorAll('.map__pin:not(.map__pin--main)').forEach(function (pin) {
       pin.classList.remove('map__pin--active');
     });
     currentPin.classList.add('map__pin--active');
+  }
+
+  function resetMap() {
+    mapPins.querySelectorAll('.map__pin:not(.map__pin--main)').forEach(function (pin) {
+      pin.remove();
+    });
+    customPin.style.left = MAIN_PIN_DEFAULT_LEFT;
+    customPin.style.top = MAIN_PIN_DEFAULT_TOP;
   }
 
   function createPin(advert) {
@@ -113,6 +123,7 @@
     toggleMap: toggleMap,
     getCustomPinAddress: getCustomPinAddress,
     getCustomPinValidTopLeft: getCustomPinValidTopLeft,
+    resetMap: resetMap,
     MIN_X: PIN_MIN_X,
     MIN_Y: PIN_MIN_Y,
     MAX_X: PIN_MAX_X,

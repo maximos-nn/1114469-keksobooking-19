@@ -30,11 +30,18 @@
     }
   }
 
+  function onSuccessFormSubmit() {
+    isAppActive = false;
+    window.map.resetMap();
+    togglePage(isAppActive);
+  }
+
   function initApp() {
     togglePage(isAppActive);
     customPin.addEventListener('mousedown', onCustomPinMousedown);
     customPin.addEventListener('keydown', onCustomPinEnterKey);
     window.pinSetDragHandler(customPin);
+    window.form.setSuccessFormUploadCb(onSuccessFormSubmit);
   }
 
   initApp();
