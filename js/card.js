@@ -51,6 +51,9 @@
   }
 
   function closeCard() {
+    if (!map) {
+      return;
+    }
     var card = map.querySelector('.map__card');
     if (card) {
       card.remove();

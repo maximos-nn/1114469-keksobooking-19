@@ -35,15 +35,9 @@
     var validGuestsOptions = ROOMS_FOR_GUESTS[rooms.value];
     var guestsOptions = guests.querySelectorAll('option');
     guestsOptions.forEach(function (currentOption) {
-      currentOption.disabled = true;
-      currentOption.selected = false;
       var index = validGuestsOptions.indexOf(currentOption.value);
-      if (index >= 0) {
-        currentOption.disabled = false;
-        if (index === 0) {
-          currentOption.selected = true;
-        }
-      }
+      currentOption.disabled = index === -1;
+      currentOption.selected = index === 0;
     });
   }
 
