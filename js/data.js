@@ -8,6 +8,7 @@
     'bungalo': {title: 'Бунгало', minPrice: 0}
   };
   var ADVERT_COUNT = 5;
+  var NO_FILTER = 'any';
   var adverts = [];
   var FilterType = {HOUSING_TYPE: 'ht'};
   var filter = {};
@@ -27,18 +28,21 @@
     window.backend.load(getAdvertsLoadSuccessHandler(onDone), onAdvertsLoadError);
   }
 
-  function filterHousingType(ads) {
-    if (filter[FilterType.HOUSING_TYPE]) {
-      return ads.filter(function (ad) {
-        return ad.offer.type === filter[FilterType.HOUSING_TYPE];
-      });
+  function sameHousingType(advert) {
+    var value = filter[FilterType.HOUSING_TYPE];
+    if (!value || value === NO_FILTER) {
+      return true;
     }
-    return ads;
+    return advert.offer.type === value;
+  }
+
+  function filterCallback(advert) {
+    return sameHousingType(advert);
   }
 
   function getAdverts() {
     if (Object.keys(filter).length) {
-      return filterHousingType(adverts.slice()).slice(0, ADVERT_COUNT);
+      return adverts.filter(filterCallback).slice(0, ADVERT_COUNT);
     }
     return adverts.slice(0, ADVERT_COUNT);
   }
@@ -51,12 +55,8 @@
     return HOUSING[housing].title;
   }
 
-  function setFilter(type, value) {
-    if (value) {
-      filter[type] = value;
-    } else {
-      delete filter[type];
-    }
+  function setFilter(filterData) {
+    filter = filterData;
   }
 
   window.data = {

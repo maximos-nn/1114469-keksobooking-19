@@ -5,28 +5,13 @@
   var housingType = filters.querySelector('#housing-type');
   var subscriber;
 
-  function onHousingTypeChange(evt) {
-    var value = evt.currentTarget.value;
-    if (value === 'any') {
-      window.data.setFilter(window.data.FilterType.HOUSING_TYPE, null);
-    } else {
-      window.data.setFilter(window.data.FilterType.HOUSING_TYPE, value);
-    }
-  }
-
   function onFilterFormChange() {
+    var filterData = {};
+    filterData[window.data.FilterType.HOUSING_TYPE] = housingType.value;
+    window.data.setFilter(filterData);
     if (typeof subscriber === 'function') {
       subscriber();
     }
-  }
-
-  function addHandlers() {
-    filters.addEventListener('change', onFilterFormChange);
-    housingType.addEventListener('change', onHousingTypeChange);
-  }
-
-  function removeHandlers() {
-    housingType.removeEventListener('change', onHousingTypeChange);
   }
 
   function toggleFilters(active) {
@@ -35,9 +20,9 @@
       control.disabled = !active;
     });
     if (active) {
-      addHandlers();
+      filters.addEventListener('change', onFilterFormChange);
     } else {
-      removeHandlers();
+      filters.removeEventListener('change', onFilterFormChange);
     }
   }
 
