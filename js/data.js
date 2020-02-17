@@ -10,8 +10,15 @@
   var ADVERT_COUNT = 5;
   var NO_FILTER = 'any';
   var adverts = [];
-  var FilterType = {HOUSING_TYPE: 'ht'};
+  var FilterType = {
+    HOUSING_TYPE: 'ht',
+    HOUSING_PRICE: 'hp'
+  };
   var filter = {};
+  var HousingPrice = {
+    Range: {LOW: 'low', MIDDLE: 'middle', HIGH: 'high'},
+    Bounds: {LOWER: 10000, UPPER: 50000}
+  };
 
   function getAdvertsLoadSuccessHandler(onAdvertsCreated) {
     return function (data) {
@@ -36,8 +43,25 @@
     return advert.offer.type === value;
   }
 
+  function sameHousingPrice(advert) {
+    var value = filter[FilterType.HOUSING_PRICE];
+    if (!value) {
+      return true;
+    }
+    switch (value) {
+      case HousingPrice.Range.LOW:
+        return advert.offer.price < HousingPrice.Bounds.LOWER;
+      case HousingPrice.Range.MIDDLE:
+        return advert.offer.price >= HousingPrice.Bounds.LOWER && advert.offer.price <= HousingPrice.Bounds.UPPER;
+      case HousingPrice.Range.HIGH:
+        return advert.offer.price > HousingPrice.Bounds.UPPER;
+      default:
+        return true;
+    }
+  }
+
   function filterCallback(advert) {
-    return sameHousingType(advert);
+    return sameHousingType(advert) && sameHousingPrice(advert);
   }
 
   function getAdverts() {

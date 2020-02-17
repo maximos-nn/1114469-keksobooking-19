@@ -3,11 +3,13 @@
 (function () {
   var filters = document.querySelector('.map__filters');
   var housingType = filters.querySelector('#housing-type');
+  var housingPrice = filters.querySelector('#housing-price');
   var subscriber;
 
   function onFilterFormChange() {
     var filterData = {};
     filterData[window.data.FilterType.HOUSING_TYPE] = housingType.value;
+    filterData[window.data.FilterType.HOUSING_PRICE] = housingPrice.value;
     window.data.setFilter(filterData);
     if (typeof subscriber === 'function') {
       subscriber();
