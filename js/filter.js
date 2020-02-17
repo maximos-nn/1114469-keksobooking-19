@@ -19,16 +19,13 @@
     controls.forEach(function (control) {
       control.disabled = !active;
     });
-    if (active) {
-      filters.addEventListener('change', onFilterFormChange);
-    } else {
-      filters.removeEventListener('change', onFilterFormChange);
-    }
   }
 
   function setFilterChangeCb(callback) {
     subscriber = callback;
   }
+
+  filters.addEventListener('change', window.utils.debounce(onFilterFormChange));
 
   window.filter = {
     toggleFilters: toggleFilters,

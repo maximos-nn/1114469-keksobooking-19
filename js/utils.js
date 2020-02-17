@@ -1,6 +1,8 @@
 'use strict';
 
 (function () {
+  var DEBOUNCE_INTERVAL = 500;
+
   function getRandomInt(min, max) {
     min = Math.ceil(min);
     max = Math.floor(max);
@@ -36,6 +38,19 @@
     return shuffleArray(array.slice()).slice(getRandomInt(0, array.length));
   }
 
+  function debounce(cb) {
+    var lastTimeout = null;
+    return function () {
+      var parameters = arguments;
+      if (lastTimeout) {
+        window.clearTimeout(lastTimeout);
+      }
+      lastTimeout = window.setTimeout(function () {
+        cb.apply(null, parameters);
+      }, DEBOUNCE_INTERVAL);
+    };
+  }
+
   window.utils = {
     const: {
       ESC_KEY: 'Escape',
@@ -44,6 +59,7 @@
     },
     getRandomIntInclusive: getRandomIntInclusive,
     getRandomElement: getRandomElement,
-    getRandomSubarray: getRandomSubarray
+    getRandomSubarray: getRandomSubarray,
+    debounce: debounce
   };
 })();

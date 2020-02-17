@@ -14,7 +14,6 @@
   var map = document.querySelector('.map');
   var mapPins = map.querySelector('.map__pins');
   var customPin = mapPins.querySelector('.map__pin--main');
-  // var filters = map.querySelector('.map__filters');
   var isMapActive = false;
   var PIN_MAX_X = mapPins.offsetWidth - 1;
 
