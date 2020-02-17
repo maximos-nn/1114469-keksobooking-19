@@ -14,7 +14,6 @@
   var map = document.querySelector('.map');
   var mapPins = map.querySelector('.map__pins');
   var customPin = mapPins.querySelector('.map__pin--main');
-  var filters = map.querySelector('.map__filters');
   var isMapActive = false;
   var PIN_MAX_X = mapPins.offsetWidth - 1;
 
@@ -25,11 +24,15 @@
     currentPin.classList.add('map__pin--active');
   }
 
-  function resetMap() {
+  function clearMap() {
     window.card.closeCard();
     mapPins.querySelectorAll('.map__pin:not(.map__pin--main)').forEach(function (pin) {
       pin.remove();
     });
+  }
+
+  function resetMap() {
+    clearMap();
     customPin.style.left = MAIN_PIN_DEFAULT_LEFT;
     customPin.style.top = MAIN_PIN_DEFAULT_TOP;
     window.form.addressField.value = getCustomPinAddress();
@@ -63,11 +66,9 @@
     });
   }
 
-  function toggleFilters(active) {
-    var controls = filters.querySelectorAll('select, fieldset');
-    for (var i = 0; i < controls.length; i++) {
-      controls[i].disabled = !active;
-    }
+  function onFilterFormChange() {
+    clearMap();
+    renderPins(mapPins, window.data.getAdverts());
   }
 
   function toggleMap(active) {
@@ -75,10 +76,12 @@
     if (active) {
       map.classList.remove('map--faded');
       renderPins(mapPins, window.data.getAdverts());
+      window.filter.setFilterChangeCb(onFilterFormChange);
     } else {
       map.classList.add('map--faded');
+      window.filter.setFilterChangeCb(null);
     }
-    toggleFilters(active);
+    window.filter.toggleFilters(active);
   }
 
   function getCustomPinCoordsFromTopLeft(top, left) {
