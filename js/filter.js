@@ -2,13 +2,13 @@
 
 (function () {
   var filters = document.querySelector('.map__filters');
+  var housingType = filters.querySelector('#housing-type');
+  var housingPrice = filters.querySelector('#housing-price');
+  var housingRooms = filters.querySelector('#housing-rooms');
+  var housingGuests = filters.querySelector('#housing-guests');
   var subscriber;
 
   function getFilterData() {
-    var housingType = filters.querySelector('#housing-type');
-    var housingPrice = filters.querySelector('#housing-price');
-    var housingRooms = filters.querySelector('#housing-rooms');
-    var housingGuests = filters.querySelector('#housing-guests');
     var housingFeatures = filters.querySelectorAll('#housing-features input:checked');
     var filterData = {};
     filterData[window.data.FilterType.HOUSING_TYPE] = housingType.value;
