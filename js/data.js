@@ -12,7 +12,10 @@
   var adverts = [];
   var FilterType = {
     HOUSING_TYPE: 'ht',
-    HOUSING_PRICE: 'hp'
+    HOUSING_PRICE: 'hp',
+    HOUSING_ROOMS: 'hr',
+    HOUSING_GUESTS: 'hg',
+    HOUSING_FEATURES: 'hf'
   };
   var filter = {};
   var HousingPrice = {
@@ -60,8 +63,41 @@
     }
   }
 
+  function sameHousingRooms(advert) {
+    var value = filter[FilterType.HOUSING_ROOMS];
+    if (!value || value === NO_FILTER) {
+      return true;
+    }
+    return advert.offer.rooms === Number(value);
+  }
+
+  function sameHousingGuests(advert) {
+    var value = filter[FilterType.HOUSING_GUESTS];
+    if (!value || value === NO_FILTER) {
+      return true;
+    }
+    return advert.offer.guests === Number(value);
+  }
+
+  function sameHousingFeatures(advert) {
+    var selectedFeatures = filter[FilterType.HOUSING_FEATURES];
+    if (!Array.isArray(selectedFeatures) || selectedFeatures.length === 0) {
+      return true;
+    }
+    if (!Array.isArray(advert.offer.features) || advert.offer.features.length === 0) {
+      return false;
+    }
+    return selectedFeatures.every(function (selectedFeature) {
+      return advert.offer.features.includes(selectedFeature);
+    });
+  }
+
   function filterCallback(advert) {
-    return sameHousingType(advert) && sameHousingPrice(advert);
+    return sameHousingType(advert) &&
+      sameHousingPrice(advert) &&
+      sameHousingRooms(advert) &&
+      sameHousingGuests(advert) &&
+      sameHousingFeatures(advert);
   }
 
   function getAdverts() {
