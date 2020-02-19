@@ -18,6 +18,10 @@
   var minPrice = advertForm.querySelector('#price');
   var resetBtn = advertForm.querySelector('.ad-form__reset');
   var subscriber;
+  var avatarChooser = advertForm.querySelector('#avatar');
+  var avatarPreview = advertForm.querySelector('.ad-form-header__preview img');
+  var housingPhotoChooser = advertForm.querySelector('#images');
+  var housingPhotoPreview = advertForm.querySelector('.ad-form__photo');
 
   function toggleForm(active) {
     var sets = advertForm.querySelectorAll('fieldset');
@@ -106,12 +110,33 @@
     window.backend.save(new FormData(advertForm), onFormUploadSuccess, onFormUploadError);
   }
 
+  function onAvatarLoad(avatar) {
+    avatarPreview.src = avatar;
+  }
+
+  function onAvatarChooserChange() {
+    window.utils.readFile(avatarChooser.files[0], onAvatarLoad);
+  }
+
+  function onHousingPhotoLoad(photo) {
+    housingPhotoPreview.style.backgroundSize = 'cover';
+    housingPhotoPreview.style.backgroundRepeat = 'no-repeat';
+    housingPhotoPreview.style.backgroundPosition = 'center';
+    housingPhotoPreview.style.backgroundImage = 'url(' + photo + ')';
+  }
+
+  function onHousingPhotoChooserChange() {
+    window.utils.readFile(housingPhotoChooser.files[0], onHousingPhotoLoad);
+  }
+
   rooms.addEventListener('change', onRoomSelectChange);
   timeIn.addEventListener('change', onTimeInChange);
   timeOut.addEventListener('change', onTimeOutChange);
   housingType.addEventListener('change', onHousingTypeChange);
   advertForm.addEventListener('submit', onFormSubmit);
   resetBtn.addEventListener('click', onResetClick);
+  avatarChooser.addEventListener('change', onAvatarChooserChange);
+  housingPhotoChooser.addEventListener('change', onHousingPhotoChooserChange);
   setDefaults();
 
   window.form = {
