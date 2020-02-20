@@ -7,6 +7,7 @@
     '3': ['3', '2', '1'],
     '100': ['0']
   };
+  var DEFAULT_AVATAR = 'img/muffin-grey.svg';
 
   var advertForm = document.querySelector('.ad-form');
   var addressField = advertForm.querySelector('#address');
@@ -77,6 +78,8 @@
 
   function setDefaults() {
     addressField.value = window.map.getCustomPinAddress();
+    avatarPreview.src = DEFAULT_AVATAR;
+    housingPhotoPreview.removeAttribute('style');
     validateGuests();
     validateCheckTimes(true);
     validateMinPrice();
