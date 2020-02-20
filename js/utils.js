@@ -51,6 +51,17 @@
     };
   }
 
+  function readFile(file, onLoadCb) {
+    if (!file) {
+      return;
+    }
+    var reader = new FileReader();
+    reader.addEventListener('load', function () {
+      onLoadCb(reader.result);
+    });
+    reader.readAsDataURL(file);
+  }
+
   window.utils = {
     const: {
       ESC_KEY: 'Escape',
@@ -60,6 +71,7 @@
     getRandomIntInclusive: getRandomIntInclusive,
     getRandomElement: getRandomElement,
     getRandomSubarray: getRandomSubarray,
-    debounce: debounce
+    debounce: debounce,
+    readFile: readFile
   };
 })();
