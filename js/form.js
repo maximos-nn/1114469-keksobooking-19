@@ -18,7 +18,8 @@
   var housingType = advertForm.querySelector('#type');
   var minPrice = advertForm.querySelector('#price');
   var resetBtn = advertForm.querySelector('.ad-form__reset');
-  var subscriber;
+  var formUploadSubscribes = [];
+  var formResetSubscribes = [];
   var avatarChooser = advertForm.querySelector('#avatar');
   var avatarPreview = advertForm.querySelector('.ad-form-header__preview img');
   var housingPhotoChooser = advertForm.querySelector('#images');
@@ -86,22 +87,33 @@
   }
 
   function setSuccessFormUploadCb(callback) {
-    subscriber = callback;
+    if (typeof callback === 'function') {
+      formUploadSubscribes.push(callback);
+    }
+  }
+
+  function setFormResetCb(callback) {
+    if (typeof callback === 'function') {
+      formResetSubscribes.push(callback);
+    }
   }
 
   function onResetClick(evt) {
     evt.preventDefault();
     advertForm.reset();
     setDefaults();
+    formResetSubscribes.forEach(function (handler) {
+      handler();
+    });
   }
 
   function onFormUploadSuccess() {
     window.message.showSuccessMessage();
     advertForm.reset();
     setDefaults();
-    if (typeof subscriber === 'function') {
-      subscriber();
-    }
+    formUploadSubscribes.forEach(function (handler) {
+      handler();
+    });
   }
 
   function onFormUploadError(message) {
@@ -145,6 +157,7 @@
   window.form = {
     toggleForm: toggleForm,
     setSuccessFormUploadCb: setSuccessFormUploadCb,
+    setFormResetCb: setFormResetCb,
     addressField: addressField
   };
 })();

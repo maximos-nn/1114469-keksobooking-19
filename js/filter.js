@@ -7,11 +7,10 @@
   var housingPrice = filters.querySelector('#housing-price');
   var housingRooms = filters.querySelector('#housing-rooms');
   var housingGuests = filters.querySelector('#housing-guests');
-  var housingFeatures = filters.querySelector('#housing-features');
   var subscriber;
 
   function getFilterData() {
-    var checkedHousingFeatures = housingFeatures.querySelectorAll('input:checked');
+    var checkedHousingFeatures = filters.querySelectorAll('#housing-features input:checked');
     var filterData = {};
     filterData[window.data.FilterType.HOUSING_TYPE] = housingType.value;
     filterData[window.data.FilterType.HOUSING_PRICE] = housingPrice.value;
@@ -35,9 +34,8 @@
       control.disabled = !active;
     });
     if (!active) {
-      housingFeatures.querySelectorAll('input:checked').forEach(function (control) {
-        control.checked = false;
-      });
+      filters.reset();
+      window.data.setFilter(getFilterData());
     }
   }
 

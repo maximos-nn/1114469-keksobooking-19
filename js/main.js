@@ -30,10 +30,18 @@
     }
   }
 
-  function onSuccessFormSubmit() {
+  function stopApp() {
     isAppActive = false;
     togglePage(isAppActive);
     window.map.resetMap();
+  }
+
+  function onSuccessFormSubmit() {
+    stopApp();
+  }
+
+  function onFormReset() {
+    stopApp();
   }
 
   function initApp() {
@@ -42,6 +50,7 @@
     customPin.addEventListener('keydown', onCustomPinEnterKey);
     window.pinSetDragHandler(customPin);
     window.form.setSuccessFormUploadCb(onSuccessFormSubmit);
+    window.form.setFormResetCb(onFormReset);
   }
 
   initApp();
