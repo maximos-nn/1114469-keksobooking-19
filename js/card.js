@@ -26,16 +26,31 @@
     });
   }
 
+  function renderField(fieldElement, filedValue, valueProperty) {
+    if (filedValue) {
+      fieldElement[valueProperty || 'textContent'] = filedValue;
+    } else {
+      fieldElement.remove();
+    }
+  }
+
   function createCard(advert) {
     var cardElement = cardTemplate.cloneNode(true);
-    cardElement.querySelector('.popup__title').textContent = advert.offer.title;
-    cardElement.querySelector('.popup__text--address').textContent = advert.offer.address;
-    cardElement.querySelector('.popup__text--price').innerHTML = advert.offer.price + ' ₽<span>/ночь</span>';
-    cardElement.querySelector('.popup__type').textContent = window.data.getTitle(advert.offer.type);
-    cardElement.querySelector('.popup__text--capacity').textContent = advert.offer.rooms + ' комнаты для ' + advert.offer.guests + ' гостей';
-    cardElement.querySelector('.popup__text--time').textContent = 'Заезд после ' + advert.offer.checkin + ', выезд до ' + advert.offer.checkout;
-    cardElement.querySelector('.popup__description').textContent = advert.offer.description;
-    cardElement.querySelector('.popup__avatar').src = advert.author.avatar;
+
+    var tempFieldValue = advert.offer.price !== undefined && advert.offer.price + ' ₽<span>/ночь</span>';
+    renderField(cardElement.querySelector('.popup__text--price'), tempFieldValue, 'innerHTML');
+
+    tempFieldValue = advert.offer.rooms !== undefined && advert.offer.guests !== undefined && advert.offer.rooms + ' комнаты для ' + advert.offer.guests + ' гостей';
+    renderField(cardElement.querySelector('.popup__text--capacity'), tempFieldValue);
+
+    tempFieldValue = advert.offer.checkin && advert.offer.checkout && 'Заезд после ' + advert.offer.checkin + ', выезд до ' + advert.offer.checkout;
+    renderField(cardElement.querySelector('.popup__text--time'), tempFieldValue);
+
+    renderField(cardElement.querySelector('.popup__title'), advert.offer.title);
+    renderField(cardElement.querySelector('.popup__text--address'), advert.offer.address);
+    renderField(cardElement.querySelector('.popup__type'), window.data.getTitle(advert.offer.type));
+    renderField(cardElement.querySelector('.popup__description'), advert.offer.description);
+    renderField(cardElement.querySelector('.popup__avatar'), advert.author && advert.author.avatar, 'src');
     renderFeatures(cardElement.querySelector('.popup__features'), advert.offer.features);
     renderPhotos(cardElement.querySelector('.popup__photos'), advert.offer.photos);
     cardElement.querySelector('.popup__close').addEventListener('click', function () {
