@@ -60,9 +60,7 @@
 
   function renderPins(container, adverts) {
     adverts.forEach(function (advert) {
-      if ('offer' in advert) {
-        container.appendChild(createPin(advert));
-      }
+      container.appendChild(createPin(advert));
     });
   }
 

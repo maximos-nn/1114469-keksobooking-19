@@ -24,8 +24,10 @@
   };
 
   function getAdvertsLoadSuccessHandler(onAdvertsCreated) {
-    return function (data) {
-      adverts = data;
+    return function (loadedAdverts) {
+      adverts = loadedAdverts.filter(function (advert) {
+        return 'offer' in advert;
+      });
       onAdvertsCreated();
     };
   }
