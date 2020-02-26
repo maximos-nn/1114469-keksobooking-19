@@ -12,6 +12,7 @@
   function startApp() {
     isAppActive = true;
     togglePage(isAppActive);
+    window.form.addressField.value = window.map.getCustomPinAddress();
   }
 
   function onAppDataLoaded() {
