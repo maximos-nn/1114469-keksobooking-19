@@ -63,7 +63,7 @@
   }
 
   window.utils = {
-    const: {
+    Const: {
       ESC_KEY: 'Escape',
       ENTER_KEY: 'Enter',
       MAIN_MOUSE_BUTTON: 0

@@ -26,46 +26,50 @@
     });
   }
 
-  function renderField(fieldElement, filedValue, valueProperty) {
+  function renderField(fieldElement, filedValue) {
     if (filedValue) {
-      fieldElement[valueProperty || 'textContent'] = filedValue;
+      fieldElement['textContent'] = filedValue;
     } else {
       fieldElement.remove();
     }
   }
 
-  function createCard(advert) {
-    var cardElement = cardTemplate.cloneNode(true);
+  function create(advert) {
+    var card = cardTemplate.cloneNode(true);
 
-    var tempFieldValue = advert.offer.price !== undefined && advert.offer.price + ' ₽<span>/ночь</span>';
-    renderField(cardElement.querySelector('.popup__text--price'), tempFieldValue, 'innerHTML');
+    var tempFieldValue = advert.offer.price !== undefined && advert.offer.price + ' ₽/ночь';
+    renderField(card.querySelector('.popup__text--price'), tempFieldValue);
 
     tempFieldValue = advert.offer.rooms !== undefined && advert.offer.guests !== undefined && advert.offer.rooms + ' комнаты для ' + advert.offer.guests + ' гостей';
-    renderField(cardElement.querySelector('.popup__text--capacity'), tempFieldValue);
+    renderField(card.querySelector('.popup__text--capacity'), tempFieldValue);
 
     tempFieldValue = advert.offer.checkin && advert.offer.checkout && 'Заезд после ' + advert.offer.checkin + ', выезд до ' + advert.offer.checkout;
-    renderField(cardElement.querySelector('.popup__text--time'), tempFieldValue);
+    renderField(card.querySelector('.popup__text--time'), tempFieldValue);
 
-    renderField(cardElement.querySelector('.popup__title'), advert.offer.title);
-    renderField(cardElement.querySelector('.popup__text--address'), advert.offer.address);
-    renderField(cardElement.querySelector('.popup__type'), window.data.getTitle(advert.offer.type));
-    renderField(cardElement.querySelector('.popup__description'), advert.offer.description);
-    renderField(cardElement.querySelector('.popup__avatar'), advert.author && advert.author.avatar, 'src');
-    renderFeatures(cardElement.querySelector('.popup__features'), advert.offer.features);
-    renderPhotos(cardElement.querySelector('.popup__photos'), advert.offer.photos);
-    cardElement.querySelector('.popup__close').addEventListener('click', function () {
-      closeCard();
+    renderField(card.querySelector('.popup__title'), advert.offer.title);
+    renderField(card.querySelector('.popup__text--address'), advert.offer.address);
+    renderField(card.querySelector('.popup__type'), window.data.getTitle(advert.offer.type));
+    renderField(card.querySelector('.popup__description'), advert.offer.description);
+    renderFeatures(card.querySelector('.popup__features'), advert.offer.features);
+    renderPhotos(card.querySelector('.popup__photos'), advert.offer.photos);
+
+    if (advert.author && advert.author.avatar) {
+      card.querySelector('.popup__avatar').src = advert.author.avatar;
+    }
+
+    card.querySelector('.popup__close').addEventListener('click', function () {
+      close();
     });
-    return cardElement;
+    return card;
   }
 
   function onCardEscPress(evt) {
-    if (evt.key === window.utils.const.ESC_KEY) {
-      closeCard();
+    if (evt.key === window.utils.Const.ESC_KEY) {
+      close();
     }
   }
 
-  function closeCard() {
+  function close() {
     if (!map) {
       return;
     }
@@ -76,15 +80,15 @@
     }
   }
 
-  function showCard(container, advert) {
+  function show(container, advert) {
     map = container;
-    closeCard();
-    map.insertBefore(createCard(advert), map.querySelector('.map__filters-container'));
+    close();
+    map.insertBefore(create(advert), map.querySelector('.map__filters-container'));
     document.addEventListener('keydown', onCardEscPress);
   }
 
   window.card = {
-    showCard: showCard,
-    closeCard: closeCard
+    show: show,
+    close: close
   };
 })();

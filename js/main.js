@@ -5,8 +5,8 @@
   var isAppActive = false;
 
   function togglePage(active) {
-    window.map.toggleMap(active);
-    window.form.toggleForm(active);
+    window.map.toggle(active);
+    window.form.toggle(active);
   }
 
   function startApp() {
@@ -20,21 +20,21 @@
   }
 
   function onCustomPinMousedown(evt) {
-    if (evt.button === window.utils.const.MAIN_MOUSE_BUTTON && !isAppActive) {
-      window.data.createAdverts(onAppDataLoaded);
+    if (evt.button === window.utils.Const.MAIN_MOUSE_BUTTON && !isAppActive) {
+      window.data.loadAdverts(onAppDataLoaded);
     }
   }
 
   function onCustomPinEnterKey(evt) {
-    if (evt.key === window.utils.const.ENTER_KEY && !isAppActive) {
-      window.data.createAdverts(onAppDataLoaded);
+    if (evt.key === window.utils.Const.ENTER_KEY && !isAppActive) {
+      window.data.loadAdverts(onAppDataLoaded);
     }
   }
 
   function stopApp() {
     isAppActive = false;
     togglePage(isAppActive);
-    window.map.resetMap();
+    window.map.reset();
   }
 
   function onSuccessFormSubmit() {
@@ -50,8 +50,8 @@
     customPin.addEventListener('mousedown', onCustomPinMousedown);
     customPin.addEventListener('keydown', onCustomPinEnterKey);
     window.pinSetDragHandler(customPin);
-    window.form.setSuccessFormUploadCb(onSuccessFormSubmit);
-    window.form.setFormResetCb(onFormReset);
+    window.form.setSuccessUploadCb(onSuccessFormSubmit);
+    window.form.setResetCb(onFormReset);
   }
 
   initApp();

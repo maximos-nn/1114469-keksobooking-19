@@ -1,15 +1,14 @@
 'use strict';
 
 (function () {
-  var HOUSING = {
+  var ADVERT_COUNT = 5;
+  var NO_FILTER = 'any';
+  var housingTypeMap = {
     'palace': {title: 'Дворец', minPrice: 10000},
     'flat': {title: 'Квартира', minPrice: 1000},
     'house': {title: 'Дом', minPrice: 5000},
     'bungalo': {title: 'Бунгало', minPrice: 0}
   };
-  var ADVERT_COUNT = 5;
-  var NO_FILTER = 'any';
-  var adverts = [];
   var FilterType = {
     HOUSING_TYPE: 'ht',
     HOUSING_PRICE: 'hp',
@@ -17,11 +16,12 @@
     HOUSING_GUESTS: 'hg',
     HOUSING_FEATURES: 'hf'
   };
-  var filter = {};
   var HousingPrice = {
     Range: {LOW: 'low', MIDDLE: 'middle', HIGH: 'high'},
     Bounds: {LOWER: 10000, UPPER: 50000}
   };
+  var adverts = [];
+  var filter = {};
 
   function getAdvertsLoadSuccessHandler(onAdvertsCreated) {
     return function (loadedAdverts) {
@@ -36,11 +36,11 @@
     window.message.showTransferError(message);
   }
 
-  function createAdverts(onDone) {
+  function loadAdverts(onDone) {
     window.backend.load(getAdvertsLoadSuccessHandler(onDone), onAdvertsLoadError);
   }
 
-  function sameHousingType(advert) {
+  function isMatchingFilterHousingType(advert) {
     var value = filter[FilterType.HOUSING_TYPE];
     if (!value || value === NO_FILTER) {
       return true;
@@ -48,7 +48,7 @@
     return advert.offer.type === value;
   }
 
-  function sameHousingPrice(advert) {
+  function isMatchingFilterHousingPrice(advert) {
     var value = filter[FilterType.HOUSING_PRICE];
     if (!value) {
       return true;
@@ -65,7 +65,7 @@
     }
   }
 
-  function sameHousingRooms(advert) {
+  function isMatchingFilterHousingRooms(advert) {
     var value = filter[FilterType.HOUSING_ROOMS];
     if (!value || value === NO_FILTER) {
       return true;
@@ -73,7 +73,7 @@
     return advert.offer.rooms === Number(value);
   }
 
-  function sameHousingGuests(advert) {
+  function isMatchingFilterHousingGuests(advert) {
     var value = filter[FilterType.HOUSING_GUESTS];
     if (!value || value === NO_FILTER) {
       return true;
@@ -81,7 +81,7 @@
     return advert.offer.guests === Number(value);
   }
 
-  function sameHousingFeatures(advert) {
+  function isMatchingFilterHousingFeatures(advert) {
     var selectedFeatures = filter[FilterType.HOUSING_FEATURES];
     if (!Array.isArray(selectedFeatures) || selectedFeatures.length === 0) {
       return true;
@@ -94,27 +94,27 @@
     });
   }
 
-  function filterCallback(advert) {
-    return sameHousingType(advert) &&
-      sameHousingPrice(advert) &&
-      sameHousingRooms(advert) &&
-      sameHousingGuests(advert) &&
-      sameHousingFeatures(advert);
+  function onAdvertFilter(advert) {
+    return isMatchingFilterHousingType(advert) &&
+      isMatchingFilterHousingPrice(advert) &&
+      isMatchingFilterHousingRooms(advert) &&
+      isMatchingFilterHousingGuests(advert) &&
+      isMatchingFilterHousingFeatures(advert);
   }
 
   function getAdverts() {
     if (Object.keys(filter).length) {
-      return adverts.filter(filterCallback).slice(0, ADVERT_COUNT);
+      return adverts.filter(onAdvertFilter).slice(0, ADVERT_COUNT);
     }
     return adverts.slice(0, ADVERT_COUNT);
   }
 
   function getPrice(housing) {
-    return HOUSING[housing].minPrice;
+    return housingTypeMap[housing].minPrice;
   }
 
   function getTitle(housing) {
-    return HOUSING[housing].title;
+    return housingTypeMap[housing].title;
   }
 
   function setFilter(filterData) {
@@ -122,7 +122,7 @@
   }
 
   window.data = {
-    createAdverts: createAdverts,
+    loadAdverts: loadAdverts,
     getAdverts: getAdverts,
     getPrice: getPrice,
     getTitle: getTitle,

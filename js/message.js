@@ -5,7 +5,7 @@
   var errorTemplate = document.querySelector('#error').content.querySelector('.error');
   var successTemplate = document.querySelector('#success').content.querySelector('.success');
 
-  function showSuccessMessage() {
+  function showSuccess() {
     var messageElement = successTemplate.cloneNode(true);
 
     function closeMessage() {
@@ -65,6 +65,6 @@
 
   window.message = {
     showTransferError: showTransferError,
-    showSuccessMessage: showSuccessMessage
+    showSuccess: showSuccess
   };
 })();

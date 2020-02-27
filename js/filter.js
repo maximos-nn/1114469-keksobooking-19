@@ -9,7 +9,7 @@
   var housingGuests = filters.querySelector('#housing-guests');
   var subscriber;
 
-  function getFilterData() {
+  function getFormData() {
     var checkedHousingFeatures = filters.querySelectorAll('#housing-features input:checked');
     var filterData = {};
     filterData[window.data.FilterType.HOUSING_TYPE] = housingType.value;
@@ -23,30 +23,30 @@
   }
 
   function onFilterFormChange() {
-    window.data.setFilter(getFilterData());
+    window.data.setFilter(getFormData());
     if (typeof subscriber === 'function') {
       subscriber();
     }
   }
 
-  function toggleFilters(active) {
+  function toggle(active) {
     filterControls.forEach(function (control) {
       control.disabled = !active;
     });
     if (!active) {
       filters.reset();
-      window.data.setFilter(getFilterData());
+      window.data.setFilter(getFormData());
     }
   }
 
-  function setFilterChangeCb(callback) {
+  function setChangeCb(callback) {
     subscriber = callback;
   }
 
   filters.addEventListener('change', window.utils.debounce(onFilterFormChange));
 
   window.filter = {
-    toggleFilters: toggleFilters,
-    setFilterChangeCb: setFilterChangeCb
+    toggle: toggle,
+    setChangeCb: setChangeCb
   };
 })();

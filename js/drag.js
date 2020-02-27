@@ -4,7 +4,7 @@
   var pin;
 
   function onMouseDown(evt) {
-    if (evt.button !== window.utils.const.MAIN_MOUSE_BUTTON) {
+    if (evt.button !== window.utils.Const.MAIN_MOUSE_BUTTON) {
       return;
     }
     evt.preventDefault();

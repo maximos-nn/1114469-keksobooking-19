@@ -15,7 +15,7 @@
   var mapPins = map.querySelector('.map__pins');
   var customPin = mapPins.querySelector('.map__pin--main');
   var isMapActive = false;
-  var PIN_MAX_X = mapPins.offsetWidth - 1;
+  var pinMaxX = mapPins.offsetWidth - 1;
 
   function setPinActive(currentPin) {
     mapPins.querySelectorAll('.map__pin:not(.map__pin--main)').forEach(function (pin) {
@@ -24,38 +24,38 @@
     currentPin.classList.add('map__pin--active');
   }
 
-  function clearMap() {
-    window.card.closeCard();
+  function clear() {
+    window.card.close();
     mapPins.querySelectorAll('.map__pin:not(.map__pin--main)').forEach(function (pin) {
       pin.remove();
     });
   }
 
-  function resetMap() {
-    clearMap();
+  function reset() {
+    clear();
     customPin.style.left = MAIN_PIN_DEFAULT_LEFT;
     customPin.style.top = MAIN_PIN_DEFAULT_TOP;
     window.form.addressField.value = getCustomPinAddress();
   }
 
   function createPin(advert) {
-    var pinElement = pinTemplate.cloneNode(true);
-    var img = pinElement.querySelector('img');
-    pinElement.style.left = (advert.location.x + PIN_OFFSET_X) + 'px';
-    pinElement.style.top = (advert.location.y + PIN_OFFSET_Y) + 'px';
+    var pin = pinTemplate.cloneNode(true);
+    var img = pin.querySelector('img');
+    pin.style.left = (advert.location.x + PIN_OFFSET_X) + 'px';
+    pin.style.top = (advert.location.y + PIN_OFFSET_Y) + 'px';
     img.src = advert.author.avatar;
     img.alt = advert.offer.title;
-    pinElement.addEventListener('click', function (evt) {
+    pin.addEventListener('click', function (evt) {
       setPinActive(evt.currentTarget);
-      window.card.showCard(map, advert);
+      window.card.show(map, advert);
     });
-    pinElement.addEventListener('keydown', function (evt) {
-      if (evt.key === window.utils.const.ENTER_KEY) {
+    pin.addEventListener('keydown', function (evt) {
+      if (evt.key === window.utils.Const.ENTER_KEY) {
         setPinActive(evt.currentTarget);
-        window.card.showCard(map, advert);
+        window.card.show(map, advert);
       }
     });
-    return pinElement;
+    return pin;
   }
 
   function renderPins(container, adverts) {
@@ -65,21 +65,21 @@
   }
 
   function onFilterFormChange() {
-    clearMap();
+    clear();
     renderPins(mapPins, window.data.getAdverts());
   }
 
-  function toggleMap(active) {
+  function toggle(active) {
     isMapActive = active;
     if (active) {
       map.classList.remove('map--faded');
       renderPins(mapPins, window.data.getAdverts());
-      window.filter.setFilterChangeCb(onFilterFormChange);
+      window.filter.setChangeCb(onFilterFormChange);
     } else {
       map.classList.add('map--faded');
-      window.filter.setFilterChangeCb(null);
+      window.filter.setChangeCb(null);
     }
-    window.filter.toggleFilters(active);
+    window.filter.toggle(active);
   }
 
   function getCustomPinCoordsFromTopLeft(top, left) {
@@ -96,8 +96,8 @@
     if (validCoords.x < PIN_MIN_X) {
       validCoords.x = PIN_MIN_X;
     }
-    if (validCoords.x > PIN_MAX_X) {
-      validCoords.x = PIN_MAX_X;
+    if (validCoords.x > pinMaxX) {
+      validCoords.x = pinMaxX;
     }
     if (validCoords.y < PIN_MIN_Y) {
       validCoords.y = PIN_MIN_Y;
@@ -123,13 +123,13 @@
   }
 
   window.map = {
-    toggleMap: toggleMap,
+    toggle: toggle,
     getCustomPinAddress: getCustomPinAddress,
     getCustomPinValidTopLeft: getCustomPinValidTopLeft,
-    resetMap: resetMap,
+    reset: reset,
     MIN_X: PIN_MIN_X,
     MIN_Y: PIN_MIN_Y,
-    MAX_X: PIN_MAX_X,
+    MAX_X: pinMaxX,
     MAX_Y: PIN_MAX_Y
   };
 })();
