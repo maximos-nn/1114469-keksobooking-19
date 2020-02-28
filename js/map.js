@@ -126,10 +126,6 @@
     toggle: toggle,
     getCustomPinAddress: getCustomPinAddress,
     getCustomPinValidTopLeft: getCustomPinValidTopLeft,
-    reset: reset,
-    MIN_X: PIN_MIN_X,
-    MIN_Y: PIN_MIN_Y,
-    MAX_X: pinMaxX,
-    MAX_Y: PIN_MAX_Y
+    reset: reset
   };
 })();
