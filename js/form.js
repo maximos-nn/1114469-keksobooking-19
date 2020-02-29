@@ -66,7 +66,7 @@
   }
 
   function validateMinPrice() {
-    var price = window.data.getPrice(housingType.value);
+    var price = window.data.getHousingMinPrice(housingType.value);
     minPrice.min = price;
     minPrice.placeholder = price;
   }

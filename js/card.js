@@ -48,7 +48,7 @@
 
     renderField(card.querySelector('.popup__title'), advert.offer.title);
     renderField(card.querySelector('.popup__text--address'), advert.offer.address);
-    renderField(card.querySelector('.popup__type'), window.data.getTitle(advert.offer.type));
+    renderField(card.querySelector('.popup__type'), window.data.getHousingTitle(advert.offer.type));
     renderField(card.querySelector('.popup__description'), advert.offer.description);
     renderFeatures(card.querySelector('.popup__features'), advert.offer.features);
     renderPhotos(card.querySelector('.popup__photos'), advert.offer.photos);

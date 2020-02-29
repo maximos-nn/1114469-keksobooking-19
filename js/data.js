@@ -18,17 +18,19 @@
   };
   var HousingPrice = {
     Range: {LOW: 'low', MIDDLE: 'middle', HIGH: 'high'},
-    Bounds: {LOWER: 10000, UPPER: 50000}
+    Bound: {LOWER: 10000, UPPER: 50000}
   };
   var adverts = [];
   var filter = {};
 
-  function getAdvertsLoadSuccessHandler(onAdvertsCreated) {
+  function getAdvertsLoadSuccessHandler(onAdvertsLoaded) {
     return function (loadedAdverts) {
       adverts = loadedAdverts.filter(function (advert) {
         return 'offer' in advert;
       });
-      onAdvertsCreated();
+      if (typeof onAdvertsLoaded === 'function') {
+        onAdvertsLoaded();
+      }
     };
   }
 
@@ -55,11 +57,11 @@
     }
     switch (value) {
       case HousingPrice.Range.LOW:
-        return advert.offer.price < HousingPrice.Bounds.LOWER;
+        return advert.offer.price < HousingPrice.Bound.LOWER;
       case HousingPrice.Range.MIDDLE:
-        return advert.offer.price >= HousingPrice.Bounds.LOWER && advert.offer.price <= HousingPrice.Bounds.UPPER;
+        return advert.offer.price >= HousingPrice.Bound.LOWER && advert.offer.price <= HousingPrice.Bound.UPPER;
       case HousingPrice.Range.HIGH:
-        return advert.offer.price > HousingPrice.Bounds.UPPER;
+        return advert.offer.price > HousingPrice.Bound.UPPER;
       default:
         return true;
     }
@@ -109,11 +111,11 @@
     return adverts.slice(0, ADVERT_COUNT);
   }
 
-  function getPrice(housing) {
+  function getHousingMinPrice(housing) {
     return housingTypeMap[housing].minPrice;
   }
 
-  function getTitle(housing) {
+  function getHousingTitle(housing) {
     return housingTypeMap[housing].title;
   }
 
@@ -124,8 +126,8 @@
   window.data = {
     loadAdverts: loadAdverts,
     getAdverts: getAdverts,
-    getPrice: getPrice,
-    getTitle: getTitle,
+    getHousingMinPrice: getHousingMinPrice,
+    getHousingTitle: getHousingTitle,
     FilterType: FilterType,
     setFilter: setFilter
   };

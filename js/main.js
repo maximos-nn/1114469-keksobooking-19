@@ -4,15 +4,14 @@
   var customPin = document.querySelector('.map__pin--main');
   var isAppActive = false;
 
-  function togglePage(active) {
-    window.map.toggle(active);
-    window.form.toggle(active);
+  function togglePage() {
+    window.map.toggle(isAppActive);
+    window.form.toggle(isAppActive);
   }
 
   function startApp() {
     isAppActive = true;
-    togglePage(isAppActive);
-    window.form.addressField.value = window.map.getCustomPinAddress();
+    togglePage();
   }
 
   function onAppDataLoaded() {
@@ -33,7 +32,7 @@
 
   function stopApp() {
     isAppActive = false;
-    togglePage(isAppActive);
+    togglePage();
     window.map.reset();
   }
 
@@ -46,7 +45,7 @@
   }
 
   function initApp() {
-    togglePage(isAppActive);
+    togglePage();
     customPin.addEventListener('mousedown', onCustomPinMousedown);
     customPin.addEventListener('keydown', onCustomPinEnterKey);
     window.pinSetDragHandler(customPin);
