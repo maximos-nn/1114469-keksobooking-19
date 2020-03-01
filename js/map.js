@@ -18,6 +18,7 @@
   var pinMaxX = mapPins.offsetWidth - 1;
   var dataLoadedSubscribes = [];
   var pinPositionChangeSubscribes = [];
+  var posConstraints = new window.position.PositionConstraints(PIN_MIN_X, PIN_MIN_Y, pinMaxX, PIN_MAX_Y);
 
   function callPinPosChangeHandlers() {
     var address = getCustomPinAddress();
@@ -92,43 +93,17 @@
     window.filter.toggle(active);
   }
 
-  function getCustomPinCoordsFromTopLeft(top, left) {
+  function getCustomPinCoords() {
     var height = customPin.offsetHeight;
-    var x = Math.floor(left + customPin.offsetWidth / 2);
+    var x = Math.floor(customPin.offsetLeft + customPin.offsetWidth / 2);
     if (!isActive) {
-      return {x: x, y: Math.floor(top + height / 2)};
+      return new window.position.Position(x, Math.floor(customPin.offsetTop + height / 2));
     }
-    return {x: x, y: Math.floor(top + height + PIN_NIB_HEIGHT)};
-  }
-
-  function getCustomPinValidCoords(coords) {
-    var validCoords = {x: coords.x, y: coords.y};
-    if (validCoords.x < PIN_MIN_X) {
-      validCoords.x = PIN_MIN_X;
-    }
-    if (validCoords.x > pinMaxX) {
-      validCoords.x = pinMaxX;
-    }
-    if (validCoords.y < PIN_MIN_Y) {
-      validCoords.y = PIN_MIN_Y;
-    }
-    if (validCoords.y > PIN_MAX_Y) {
-      validCoords.y = PIN_MAX_Y;
-    }
-    return validCoords;
-  }
-
-  function getCustomPinValidTopLeft(top, left) {
-    var coords = getCustomPinCoordsFromTopLeft(top, left);
-    var validCoords = getCustomPinValidCoords(coords);
-    return {
-      top: top + validCoords.y - coords.y,
-      left: left + validCoords.x - coords.x
-    };
+    return new window.position.Position(x, Math.floor(customPin.offsetTop + height + PIN_NIB_HEIGHT));
   }
 
   function getCustomPinAddress() {
-    var coords = getCustomPinCoordsFromTopLeft(customPin.offsetTop, customPin.offsetLeft);
+    var coords = getCustomPinCoords();
     return coords.x + ', ' + coords.y;
   }
 
@@ -156,14 +131,17 @@
     }
   }
 
-  function onCustomPinDrag(shift) {
-    var newCoords = getCustomPinValidTopLeft(
-        customPin.offsetTop - shift.y,
-        customPin.offsetLeft - shift.x
-    );
+  function setCustomPinPosition(shift) {
+    var oldPos = getCustomPinCoords();
+    var newValidPos = new window.position.Position(oldPos.x + shift.x, oldPos.y + shift.y, posConstraints);
+    var diff = oldPos.getShift(newValidPos);
 
-    customPin.style.top = newCoords.top + 'px';
-    customPin.style.left = newCoords.left + 'px';
+    customPin.style.top = customPin.offsetTop + diff.y + 'px';
+    customPin.style.left = customPin.offsetLeft + diff.x + 'px';
+  }
+
+  function onCustomPinDrag(shift) {
+    setCustomPinPosition(shift);
     callPinPosChangeHandlers();
   }
 

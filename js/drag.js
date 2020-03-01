@@ -9,26 +9,16 @@
     }
     evt.preventDefault();
 
-    var startCoords = {
-      x: evt.clientX,
-      y: evt.clientY
-    };
+    var startCoords = new window.position.Position(evt.clientX, evt.clientY);
 
     function onMouseMove(moveEvt) {
       moveEvt.preventDefault();
 
-      var shift = {
-        x: startCoords.x - moveEvt.clientX,
-        y: startCoords.y - moveEvt.clientY
-      };
-
-      startCoords = {
-        x: moveEvt.clientX,
-        y: moveEvt.clientY
-      };
+      var oldCoords = startCoords;
+      startCoords = new window.position.Position(moveEvt.clientX, moveEvt.clientY);
 
       mouseMoveSubscribes.forEach(function (handler) {
-        handler(shift);
+        handler(oldCoords.getShift(startCoords));
       });
     }
 
