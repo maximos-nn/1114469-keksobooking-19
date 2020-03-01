@@ -14,8 +14,17 @@
   var map = document.querySelector('.map');
   var mapPins = map.querySelector('.map__pins');
   var customPin = mapPins.querySelector('.map__pin--main');
-  var isMapActive = false;
+  var isActive = false;
   var pinMaxX = mapPins.offsetWidth - 1;
+  var dataLoadedSubscribes = [];
+  var pinPositionChangeSubscribes = [];
+
+  function callPinPosChangeHandlers() {
+    var address = getCustomPinAddress();
+    pinPositionChangeSubscribes.forEach(function (handler) {
+      handler(address);
+    });
+  }
 
   function setPinActive(currentPin) {
     mapPins.querySelectorAll('.map__pin:not(.map__pin--main)').forEach(function (pin) {
@@ -35,7 +44,7 @@
     clear();
     customPin.style.left = MAIN_PIN_DEFAULT_LEFT;
     customPin.style.top = MAIN_PIN_DEFAULT_TOP;
-    window.form.addressField.value = getCustomPinAddress();
+    callPinPosChangeHandlers();
   }
 
   function createPin(advert) {
@@ -70,12 +79,13 @@
   }
 
   function toggle(active) {
-    isMapActive = active;
+    isActive = active;
     if (active) {
       map.classList.remove('map--faded');
       renderPins(mapPins, window.data.getAdverts());
       window.filter.setChangeCb(onFilterFormChange);
     } else {
+      reset();
       map.classList.add('map--faded');
       window.filter.setChangeCb(null);
     }
@@ -85,7 +95,7 @@
   function getCustomPinCoordsFromTopLeft(top, left) {
     var height = customPin.offsetHeight;
     var x = Math.floor(left + customPin.offsetWidth / 2);
-    if (!isMapActive) {
+    if (!isActive) {
       return {x: x, y: Math.floor(top + height / 2)};
     }
     return {x: x, y: Math.floor(top + height + PIN_NIB_HEIGHT)};
@@ -122,10 +132,55 @@
     return coords.x + ', ' + coords.y;
   }
 
+  function setDataLoadedCb(callback) {
+    if (typeof callback === 'function') {
+      dataLoadedSubscribes.push(callback);
+    }
+  }
+
+  function onDataLoaded() {
+    dataLoadedSubscribes.forEach(function (handler) {
+      handler();
+    });
+  }
+
+  function onCustomPinMousedown(evt) {
+    if (evt.button === window.utils.Const.MAIN_MOUSE_BUTTON && !isActive) {
+      window.data.loadAdverts(onDataLoaded);
+    }
+  }
+
+  function onCustomPinEnterKey(evt) {
+    if (evt.key === window.utils.Const.ENTER_KEY && !isActive) {
+      window.data.loadAdverts(onDataLoaded);
+    }
+  }
+
+  function onCustomPinDrag(shift) {
+    var newCoords = getCustomPinValidTopLeft(
+        customPin.offsetTop - shift.y,
+        customPin.offsetLeft - shift.x
+    );
+
+    customPin.style.top = newCoords.top + 'px';
+    customPin.style.left = newCoords.left + 'px';
+    callPinPosChangeHandlers();
+  }
+
+  function setPinPositionChangeCb(callback) {
+    if (typeof callback === 'function') {
+      pinPositionChangeSubscribes.push(callback);
+    }
+  }
+
+  customPin.addEventListener('mousedown', onCustomPinMousedown);
+  customPin.addEventListener('keydown', onCustomPinEnterKey);
+  customPin.addEventListener('mousedown', window.drag.onMouseDown);
+  window.drag.setMouseMoveCb(onCustomPinDrag);
+
   window.map = {
     toggle: toggle,
-    getCustomPinAddress: getCustomPinAddress,
-    getCustomPinValidTopLeft: getCustomPinValidTopLeft,
-    reset: reset
+    setDataLoadedCb: setDataLoadedCb,
+    setPinPositionChangeCb: setPinPositionChangeCb
   };
 })();

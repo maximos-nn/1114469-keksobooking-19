@@ -76,7 +76,6 @@
   }
 
   function setDefaults() {
-    addressField.value = window.map.getCustomPinAddress();
     avatarPreview.src = DEFAULT_AVATAR;
     housingPhotoPreview.removeAttribute('style');
     validateGuests();

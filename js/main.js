@@ -1,39 +1,25 @@
 'use strict';
 
 (function () {
-  var customPin = document.querySelector('.map__pin--main');
   var isAppActive = false;
 
-  function togglePage() {
+  function toggleApp() {
     window.map.toggle(isAppActive);
     window.form.toggle(isAppActive);
   }
 
   function startApp() {
     isAppActive = true;
-    togglePage();
+    toggleApp();
   }
 
   function onAppDataLoaded() {
     startApp();
   }
 
-  function onCustomPinMousedown(evt) {
-    if (evt.button === window.utils.Const.MAIN_MOUSE_BUTTON && !isAppActive) {
-      window.data.loadAdverts(onAppDataLoaded);
-    }
-  }
-
-  function onCustomPinEnterKey(evt) {
-    if (evt.key === window.utils.Const.ENTER_KEY && !isAppActive) {
-      window.data.loadAdverts(onAppDataLoaded);
-    }
-  }
-
   function stopApp() {
     isAppActive = false;
-    togglePage();
-    window.map.reset();
+    toggleApp();
   }
 
   function onSuccessFormSubmit() {
@@ -44,13 +30,16 @@
     stopApp();
   }
 
+  function onCustomPinPositionChange(address) {
+    window.form.addressField.value = address;
+  }
+
   function initApp() {
-    togglePage();
-    customPin.addEventListener('mousedown', onCustomPinMousedown);
-    customPin.addEventListener('keydown', onCustomPinEnterKey);
-    window.pinSetDragHandler(customPin);
+    window.map.setDataLoadedCb(onAppDataLoaded);
+    window.map.setPinPositionChangeCb(onCustomPinPositionChange);
     window.form.setSuccessUploadCb(onSuccessFormSubmit);
     window.form.setResetCb(onFormReset);
+    toggleApp();
   }
 
   initApp();

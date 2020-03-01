@@ -1,7 +1,7 @@
 'use strict';
 
 (function () {
-  var pin;
+  var mouseMoveSubscribes = [];
 
   function onMouseDown(evt) {
     if (evt.button !== window.utils.Const.MAIN_MOUSE_BUTTON) {
@@ -27,14 +27,9 @@
         y: moveEvt.clientY
       };
 
-      var newCoords = window.map.getCustomPinValidTopLeft(
-          pin.offsetTop - shift.y,
-          pin.offsetLeft - shift.x
-      );
-
-      pin.style.top = newCoords.top + 'px';
-      pin.style.left = newCoords.left + 'px';
-      window.form.addressField.value = window.map.getCustomPinAddress();
+      mouseMoveSubscribes.forEach(function (handler) {
+        handler(shift);
+      });
     }
 
     function onMouseUp(upEvt) {
@@ -47,10 +42,14 @@
     document.addEventListener('mouseup', onMouseUp);
   }
 
-  function setDragHandler(pinElement) {
-    pin = pinElement;
-    pin.addEventListener('mousedown', onMouseDown);
+  function setMouseMoveCb(callback) {
+    if (typeof callback === 'function') {
+      mouseMoveSubscribes.push(callback);
+    }
   }
 
-  window.pinSetDragHandler = setDragHandler;
+  window.drag = {
+    setMouseMoveCb: setMouseMoveCb,
+    onMouseDown: onMouseDown
+  };
 })();
