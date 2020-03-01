@@ -31,7 +31,7 @@
   }
 
   function onCustomPinPositionChange(address) {
-    window.form.addressField.value = address;
+    window.form.setAddress(address);
   }
 
   function initApp() {

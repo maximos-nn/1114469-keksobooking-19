@@ -141,6 +141,10 @@
     window.utils.readFile(housingPhotoChooser.files[0], onHousingPhotoLoad);
   }
 
+  function setAddress(address) {
+    addressField.value = address;
+  }
+
   rooms.addEventListener('change', onRoomSelectChange);
   timeIn.addEventListener('change', onTimeInChange);
   timeOut.addEventListener('change', onTimeOutChange);
@@ -155,6 +159,6 @@
     toggle: toggle,
     setSuccessUploadCb: setSuccessUploadCb,
     setResetCb: setResetCb,
-    addressField: addressField
+    setAddress: setAddress
   };
 })();
