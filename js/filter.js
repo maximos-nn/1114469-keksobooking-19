@@ -1,6 +1,7 @@
 'use strict';
 
 (function () {
+  var DEBOUNCE_INTERVAL = 500;
   var filters = document.querySelector('.map__filters');
   var filterControls = filters.querySelectorAll('select, fieldset');
   var housingType = filters.querySelector('#housing-type');
@@ -43,7 +44,7 @@
     subscriber = callback;
   }
 
-  filters.addEventListener('change', window.utils.debounce(onFilterFormChange));
+  filters.addEventListener('change', window.utils.debounce(onFilterFormChange, DEBOUNCE_INTERVAL));
 
   window.filter = {
     toggle: toggle,
