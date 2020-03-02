@@ -13,13 +13,17 @@
     toggleApp();
   }
 
+  function stopApp() {
+    isAppActive = false;
+    toggleApp();
+  }
+
   function onAppDataLoaded() {
     startApp();
   }
 
-  function stopApp() {
-    isAppActive = false;
-    toggleApp();
+  function onCustomPinPositionChange(address) {
+    window.form.setAddress(address);
   }
 
   function onSuccessFormSubmit() {
@@ -28,10 +32,6 @@
 
   function onFormReset() {
     stopApp();
-  }
-
-  function onCustomPinPositionChange(address) {
-    window.form.setAddress(address);
   }
 
   function initApp() {
