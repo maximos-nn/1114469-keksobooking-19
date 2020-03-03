@@ -22,17 +22,22 @@
     this.setY(y);
   }
 
+  Position.prototype._fitInBounds = function (value, low, high) {
+    if (value < low) {
+      value = low;
+    }
+    if (value > high) {
+      value = high;
+    }
+    return value;
+  };
+
   Position.prototype.setX = function (x) {
     this.x = x;
     if (!this._constraints) {
       return;
     }
-    if (x < this._constraints.left) {
-      this.x = this._constraints.left;
-    }
-    if (x > this._constraints.right) {
-      this.x = this._constraints.right;
-    }
+    this.x = this._fitInBounds(x, this._constraints.left, this._constraints.right);
   };
 
   Position.prototype.setY = function (y) {
@@ -40,12 +45,7 @@
     if (!this._constraints) {
       return;
     }
-    if (y < this._constraints.top) {
-      this.y = this._constraints.top;
-    }
-    if (y > this._constraints.bottom) {
-      this.y = this._constraints.bottom;
-    }
+    this.y = this._fitInBounds(y, this._constraints.top, this._constraints.bottom);
   };
 
   Position.prototype.getShift = function (newPosition) {
