@@ -5,14 +5,14 @@
   var map;
   var closeSubscriber;
 
-  function renderArray(container, dataArray, renderItem) {
+  function renderArray(container, dataArray, renderItemCb) {
     if (!Array.isArray(dataArray) || dataArray.length === 0) {
       container.remove();
       return;
     }
     container.innerHTML = '';
     dataArray.forEach(function (item) {
-      container.innerHTML += renderItem(item);
+      container.innerHTML += renderItemCb(item);
     });
   }
 
