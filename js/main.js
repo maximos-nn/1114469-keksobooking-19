@@ -1,47 +1,45 @@
 'use strict';
 
 (function () {
-  var customPin = document.querySelector('.map__pin--main');
   var isAppActive = false;
 
-  function togglePage(active) {
-    window.map.toggleMap(active);
-    window.form.toggleForm(active);
+  function toggleApp() {
+    window.map.toggle(isAppActive);
+    window.form.toggle(isAppActive);
   }
 
   function startApp() {
     isAppActive = true;
-    togglePage(isAppActive);
+    toggleApp();
+  }
+
+  function stopApp() {
+    isAppActive = false;
+    toggleApp();
   }
 
   function onAppDataLoaded() {
     startApp();
   }
 
-  function onCustomPinMousedown(evt) {
-    if (evt.button === window.utils.const.MAIN_MOUSE_BUTTON && !isAppActive) {
-      window.data.createAdverts(onAppDataLoaded);
-    }
-  }
-
-  function onCustomPinEnterKey(evt) {
-    if (evt.key === window.utils.const.ENTER_KEY && !isAppActive) {
-      window.data.createAdverts(onAppDataLoaded);
-    }
+  function onCustomPinPositionChange(address) {
+    window.form.setAddress(address);
   }
 
   function onSuccessFormSubmit() {
-    isAppActive = false;
-    togglePage(isAppActive);
-    window.map.resetMap();
+    stopApp();
+  }
+
+  function onFormReset() {
+    stopApp();
   }
 
   function initApp() {
-    togglePage(isAppActive);
-    customPin.addEventListener('mousedown', onCustomPinMousedown);
-    customPin.addEventListener('keydown', onCustomPinEnterKey);
-    window.pinSetDragHandler(customPin);
-    window.form.setSuccessFormUploadCb(onSuccessFormSubmit);
+    window.map.setDataLoadedCb(onAppDataLoaded);
+    window.map.setPinPositionChangeCb(onCustomPinPositionChange);
+    window.form.setSuccessUploadCb(onSuccessFormSubmit);
+    window.form.setResetCb(onFormReset);
+    toggleApp();
   }
 
   initApp();

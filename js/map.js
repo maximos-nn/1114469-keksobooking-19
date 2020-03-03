@@ -3,135 +3,110 @@
 (function () {
   var PIN_OFFSET_X = -25;
   var PIN_OFFSET_Y = -70;
-  var PIN_NIB_HEIGHT = 16;
-  var PIN_MIN_Y = 130;
-  var PIN_MAX_Y = 630;
-  var PIN_MIN_X = 0;
-  var MAIN_PIN_DEFAULT_LEFT = '570px';
-  var MAIN_PIN_DEFAULT_TOP = '375px';
 
   var pinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
   var map = document.querySelector('.map');
   var mapPins = map.querySelector('.map__pins');
-  var customPin = mapPins.querySelector('.map__pin--main');
-  var isMapActive = false;
-  var PIN_MAX_X = mapPins.offsetWidth - 1;
+  var dataLoadedSubscribes = [];
 
-  function setPinActive(currentPin) {
+  function deactivatePins() {
     mapPins.querySelectorAll('.map__pin:not(.map__pin--main)').forEach(function (pin) {
       pin.classList.remove('map__pin--active');
     });
+  }
+
+  function setPinActive(currentPin) {
+    deactivatePins();
     currentPin.classList.add('map__pin--active');
   }
 
-  function clearMap() {
-    window.card.closeCard();
+  function createPin(advert) {
+    var pin = pinTemplate.cloneNode(true);
+    var img = pin.querySelector('img');
+    pin.style.left = (advert.location.x + PIN_OFFSET_X) + 'px';
+    pin.style.top = (advert.location.y + PIN_OFFSET_Y) + 'px';
+    img.src = advert.author.avatar;
+    img.alt = advert.offer.title;
+    pin.addEventListener('click', function (evt) {
+      setPinActive(evt.currentTarget);
+      window.card.show(map, advert, onCardClose);
+    });
+    pin.addEventListener('keydown', function (evt) {
+      if (evt.key === window.utils.Const.ENTER_KEY) {
+        setPinActive(evt.currentTarget);
+        window.card.show(map, advert, onCardClose);
+      }
+    });
+    return pin;
+  }
+
+  function renderPins(container, adverts) {
+    adverts.forEach(function (advert) {
+      container.appendChild(createPin(advert));
+    });
+  }
+
+  function clear() {
+    window.card.close();
     mapPins.querySelectorAll('.map__pin:not(.map__pin--main)').forEach(function (pin) {
       pin.remove();
     });
   }
 
-  function resetMap() {
-    clearMap();
-    customPin.style.left = MAIN_PIN_DEFAULT_LEFT;
-    customPin.style.top = MAIN_PIN_DEFAULT_TOP;
-    window.form.addressField.value = getCustomPinAddress();
+  function reset() {
+    clear();
+    window.mapCustomPin.reset();
   }
 
-  function createPin(advert) {
-    var pinElement = pinTemplate.cloneNode(true);
-    var img = pinElement.querySelector('img');
-    pinElement.style.left = (advert.location.x + PIN_OFFSET_X) + 'px';
-    pinElement.style.top = (advert.location.y + PIN_OFFSET_Y) + 'px';
-    img.src = advert.author.avatar;
-    img.alt = advert.offer.title;
-    pinElement.addEventListener('click', function (evt) {
-      setPinActive(evt.currentTarget);
-      window.card.showCard(map, advert);
-    });
-    pinElement.addEventListener('keydown', function (evt) {
-      if (evt.key === window.utils.const.ENTER_KEY) {
-        setPinActive(evt.currentTarget);
-        window.card.showCard(map, advert);
-      }
-    });
-    return pinElement;
-  }
-
-  function renderPins(container, adverts) {
-    adverts.forEach(function (advert) {
-      if ('offer' in advert) {
-        container.appendChild(createPin(advert));
-      }
-    });
-  }
-
-  function onFilterFormChange() {
-    clearMap();
-    renderPins(mapPins, window.data.getAdverts());
-  }
-
-  function toggleMap(active) {
-    isMapActive = active;
+  function toggle(active) {
+    window.mapCustomPin.toggle(active);
     if (active) {
       map.classList.remove('map--faded');
       renderPins(mapPins, window.data.getAdverts());
-      window.filter.setFilterChangeCb(onFilterFormChange);
+      window.filter.setChangeCb(onFilterFormChange);
     } else {
+      reset();
       map.classList.add('map--faded');
-      window.filter.setFilterChangeCb(null);
+      window.filter.setChangeCb(null);
     }
-    window.filter.toggleFilters(active);
+    window.filter.toggle(active);
   }
 
-  function getCustomPinCoordsFromTopLeft(top, left) {
-    var height = customPin.offsetHeight;
-    var x = Math.floor(left + customPin.offsetWidth / 2);
-    if (!isMapActive) {
-      return {x: x, y: Math.floor(top + height / 2)};
+  function setDataLoadedCb(callback) {
+    if (typeof callback === 'function') {
+      dataLoadedSubscribes.push(callback);
     }
-    return {x: x, y: Math.floor(top + height + PIN_NIB_HEIGHT)};
   }
 
-  function getCustomPinValidCoords(coords) {
-    var validCoords = {x: coords.x, y: coords.y};
-    if (validCoords.x < PIN_MIN_X) {
-      validCoords.x = PIN_MIN_X;
-    }
-    if (validCoords.x > PIN_MAX_X) {
-      validCoords.x = PIN_MAX_X;
-    }
-    if (validCoords.y < PIN_MIN_Y) {
-      validCoords.y = PIN_MIN_Y;
-    }
-    if (validCoords.y > PIN_MAX_Y) {
-      validCoords.y = PIN_MAX_Y;
-    }
-    return validCoords;
+  function setPinPositionChangeCb(callback) {
+    window.mapCustomPin.setPositionChangeCb(callback);
   }
 
-  function getCustomPinValidTopLeft(top, left) {
-    var coords = getCustomPinCoordsFromTopLeft(top, left);
-    var validCoords = getCustomPinValidCoords(coords);
-    return {
-      top: top + validCoords.y - coords.y,
-      left: left + validCoords.x - coords.x
-    };
+  function onFilterFormChange() {
+    clear();
+    renderPins(mapPins, window.data.getAdverts());
   }
 
-  function getCustomPinAddress() {
-    var coords = getCustomPinCoordsFromTopLeft(customPin.offsetTop, customPin.offsetLeft);
-    return coords.x + ', ' + coords.y;
+  function onDataLoaded() {
+    dataLoadedSubscribes.forEach(function (handler) {
+      handler();
+    });
   }
+
+  function onCustomPinProceed() {
+    window.data.loadAdverts(onDataLoaded);
+  }
+
+  function onCardClose() {
+    deactivatePins();
+  }
+
+  window.mapCustomPin.init(mapPins);
+  window.mapCustomPin.setProceedCb(onCustomPinProceed);
 
   window.map = {
-    toggleMap: toggleMap,
-    getCustomPinAddress: getCustomPinAddress,
-    getCustomPinValidTopLeft: getCustomPinValidTopLeft,
-    resetMap: resetMap,
-    MIN_X: PIN_MIN_X,
-    MIN_Y: PIN_MIN_Y,
-    MAX_X: PIN_MAX_X,
-    MAX_Y: PIN_MAX_Y
+    toggle: toggle,
+    setDataLoadedCb: setDataLoadedCb,
+    setPinPositionChangeCb: setPinPositionChangeCb
   };
 })();

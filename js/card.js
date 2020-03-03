@@ -3,6 +3,7 @@
 (function () {
   var cardTemplate = document.querySelector('#card').content.querySelector('.map__card');
   var map;
+  var closeSubscriber;
 
   function renderFeatures(container, features) {
     if (!Array.isArray(features) || features.length === 0) {
@@ -26,31 +27,57 @@
     });
   }
 
-  function createCard(advert) {
-    var cardElement = cardTemplate.cloneNode(true);
-    cardElement.querySelector('.popup__title').textContent = advert.offer.title;
-    cardElement.querySelector('.popup__text--address').textContent = advert.offer.address;
-    cardElement.querySelector('.popup__text--price').innerHTML = advert.offer.price + ' ₽<span>/ночь</span>';
-    cardElement.querySelector('.popup__type').textContent = window.data.getTitle(advert.offer.type);
-    cardElement.querySelector('.popup__text--capacity').textContent = advert.offer.rooms + ' комнаты для ' + advert.offer.guests + ' гостей';
-    cardElement.querySelector('.popup__text--time').textContent = 'Заезд после ' + advert.offer.checkin + ', выезд до ' + advert.offer.checkout;
-    cardElement.querySelector('.popup__description').textContent = advert.offer.description;
-    cardElement.querySelector('.popup__avatar').src = advert.author.avatar;
-    renderFeatures(cardElement.querySelector('.popup__features'), advert.offer.features);
-    renderPhotos(cardElement.querySelector('.popup__photos'), advert.offer.photos);
-    cardElement.querySelector('.popup__close').addEventListener('click', function () {
-      closeCard();
-    });
-    return cardElement;
-  }
-
-  function onCardEscPress(evt) {
-    if (evt.key === window.utils.const.ESC_KEY) {
-      closeCard();
+  function renderField(fieldElement, filedValue) {
+    if (filedValue) {
+      fieldElement['textContent'] = filedValue;
+    } else {
+      fieldElement.remove();
     }
   }
 
-  function closeCard() {
+  function create(advert) {
+    var card = cardTemplate.cloneNode(true);
+
+    var tempFieldValue = advert.offer.price !== undefined && advert.offer.price + ' ₽/ночь';
+    renderField(card.querySelector('.popup__text--price'), tempFieldValue);
+
+    tempFieldValue = advert.offer.rooms !== undefined && advert.offer.guests !== undefined && advert.offer.rooms + ' комнаты для ' + advert.offer.guests + ' гостей';
+    renderField(card.querySelector('.popup__text--capacity'), tempFieldValue);
+
+    tempFieldValue = advert.offer.checkin && advert.offer.checkout && 'Заезд после ' + advert.offer.checkin + ', выезд до ' + advert.offer.checkout;
+    renderField(card.querySelector('.popup__text--time'), tempFieldValue);
+
+    renderField(card.querySelector('.popup__title'), advert.offer.title);
+    renderField(card.querySelector('.popup__text--address'), advert.offer.address);
+    renderField(card.querySelector('.popup__type'), window.data.getHousingTitle(advert.offer.type));
+    renderField(card.querySelector('.popup__description'), advert.offer.description);
+    renderFeatures(card.querySelector('.popup__features'), advert.offer.features);
+    renderPhotos(card.querySelector('.popup__photos'), advert.offer.photos);
+
+    if (advert.author && advert.author.avatar) {
+      card.querySelector('.popup__avatar').src = advert.author.avatar;
+    }
+
+    card.querySelector('.popup__close').addEventListener('click', function () {
+      handleCloseEvent();
+    });
+    return card;
+  }
+
+  function onCardEscPress(evt) {
+    if (evt.key === window.utils.Const.ESC_KEY) {
+      handleCloseEvent();
+    }
+  }
+
+  function handleCloseEvent() {
+    close();
+    if (typeof closeSubscriber === 'function') {
+      closeSubscriber();
+    }
+  }
+
+  function close() {
     if (!map) {
       return;
     }
@@ -61,15 +88,16 @@
     }
   }
 
-  function showCard(container, advert) {
+  function show(container, advert, onCloseCb) {
     map = container;
-    closeCard();
-    map.insertBefore(createCard(advert), map.querySelector('.map__filters-container'));
+    closeSubscriber = onCloseCb;
+    close();
+    map.insertBefore(create(advert), map.querySelector('.map__filters-container'));
     document.addEventListener('keydown', onCardEscPress);
   }
 
   window.card = {
-    showCard: showCard,
-    closeCard: closeCard
+    show: show,
+    close: close
   };
 })();

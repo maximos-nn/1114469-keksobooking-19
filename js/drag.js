@@ -1,40 +1,25 @@
 'use strict';
 
 (function () {
-  var pin;
+  var mouseMoveSubscribes = [];
 
   function onMouseDown(evt) {
-    if (evt.button !== window.utils.const.MAIN_MOUSE_BUTTON) {
+    if (evt.button !== window.utils.Const.MAIN_MOUSE_BUTTON) {
       return;
     }
     evt.preventDefault();
 
-    var startCoords = {
-      x: evt.clientX,
-      y: evt.clientY
-    };
+    var startCoords = new window.position.Position(evt.clientX, evt.clientY);
 
     function onMouseMove(moveEvt) {
       moveEvt.preventDefault();
 
-      var shift = {
-        x: startCoords.x - moveEvt.clientX,
-        y: startCoords.y - moveEvt.clientY
-      };
+      var oldCoords = startCoords;
+      startCoords = new window.position.Position(moveEvt.clientX, moveEvt.clientY);
 
-      startCoords = {
-        x: moveEvt.clientX,
-        y: moveEvt.clientY
-      };
-
-      var newCoords = window.map.getCustomPinValidTopLeft(
-          pin.offsetTop - shift.y,
-          pin.offsetLeft - shift.x
-      );
-
-      pin.style.top = newCoords.top + 'px';
-      pin.style.left = newCoords.left + 'px';
-      window.form.addressField.value = window.map.getCustomPinAddress();
+      mouseMoveSubscribes.forEach(function (handler) {
+        handler(oldCoords.getShift(startCoords));
+      });
     }
 
     function onMouseUp(upEvt) {
@@ -47,10 +32,14 @@
     document.addEventListener('mouseup', onMouseUp);
   }
 
-  function setDragHandler(pinElement) {
-    pin = pinElement;
-    pin.addEventListener('mousedown', onMouseDown);
+  function setMouseMoveCb(callback) {
+    if (typeof callback === 'function') {
+      mouseMoveSubscribes.push(callback);
+    }
   }
 
-  window.pinSetDragHandler = setDragHandler;
+  window.drag = {
+    setMouseMoveCb: setMouseMoveCb,
+    onMouseDown: onMouseDown
+  };
 })();
