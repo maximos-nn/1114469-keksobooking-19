@@ -3,6 +3,7 @@
 (function () {
   var cardTemplate = document.querySelector('#card').content.querySelector('.map__card');
   var map;
+  var closeSubscriber;
 
   function renderFeatures(container, features) {
     if (!Array.isArray(features) || features.length === 0) {
@@ -58,14 +59,21 @@
     }
 
     card.querySelector('.popup__close').addEventListener('click', function () {
-      close();
+      handleCloseEvent();
     });
     return card;
   }
 
   function onCardEscPress(evt) {
     if (evt.key === window.utils.Const.ESC_KEY) {
-      close();
+      handleCloseEvent();
+    }
+  }
+
+  function handleCloseEvent() {
+    close();
+    if (typeof closeSubscriber === 'function') {
+      closeSubscriber();
     }
   }
 
@@ -80,8 +88,9 @@
     }
   }
 
-  function show(container, advert) {
+  function show(container, advert, onCloseCb) {
     map = container;
+    closeSubscriber = onCloseCb;
     close();
     map.insertBefore(create(advert), map.querySelector('.map__filters-container'));
     document.addEventListener('keydown', onCardEscPress);

@@ -9,10 +9,14 @@
   var mapPins = map.querySelector('.map__pins');
   var dataLoadedSubscribes = [];
 
-  function setPinActive(currentPin) {
+  function deactivatePins() {
     mapPins.querySelectorAll('.map__pin:not(.map__pin--main)').forEach(function (pin) {
       pin.classList.remove('map__pin--active');
     });
+  }
+
+  function setPinActive(currentPin) {
+    deactivatePins();
     currentPin.classList.add('map__pin--active');
   }
 
@@ -25,12 +29,12 @@
     img.alt = advert.offer.title;
     pin.addEventListener('click', function (evt) {
       setPinActive(evt.currentTarget);
-      window.card.show(map, advert);
+      window.card.show(map, advert, onCardClose);
     });
     pin.addEventListener('keydown', function (evt) {
       if (evt.key === window.utils.Const.ENTER_KEY) {
         setPinActive(evt.currentTarget);
-        window.card.show(map, advert);
+        window.card.show(map, advert, onCardClose);
       }
     });
     return pin;
@@ -91,6 +95,10 @@
 
   function onCustomPinProceed() {
     window.data.loadAdverts(onDataLoaded);
+  }
+
+  function onCardClose() {
+    deactivatePins();
   }
 
   window.mapCustomPin.init(mapPins);
