@@ -5,26 +5,23 @@
   var map;
   var closeSubscriber;
 
-  function renderFeatures(container, features) {
-    if (!Array.isArray(features) || features.length === 0) {
+  function renderArray(container, dataArray, renderItemCb) {
+    if (!Array.isArray(dataArray) || dataArray.length === 0) {
       container.remove();
       return;
     }
     container.innerHTML = '';
-    features.forEach(function (item) {
-      container.innerHTML += '<li class="popup__feature popup__feature--' + item + '"></li>';
+    dataArray.forEach(function (item) {
+      container.innerHTML += renderItemCb(item);
     });
   }
 
-  function renderPhotos(container, photos) {
-    if (!Array.isArray(photos) || photos.length === 0) {
-      container.remove();
-      return;
-    }
-    container.innerHTML = '';
-    photos.forEach(function (item) {
-      container.innerHTML += '<img src="' + item + '" class="popup__photo" width="45" height="40" alt="Фотография жилья">';
-    });
+  function renderFeaturesItem(item) {
+    return '<li class="popup__feature popup__feature--' + item + '"></li>';
+  }
+
+  function renderPhotosItem(item) {
+    return '<img src="' + item + '" class="popup__photo" width="45" height="40" alt="Фотография жилья">';
   }
 
   function renderField(fieldElement, filedValue) {
@@ -51,8 +48,8 @@
     renderField(card.querySelector('.popup__text--address'), advert.offer.address);
     renderField(card.querySelector('.popup__type'), window.data.getHousingTitle(advert.offer.type));
     renderField(card.querySelector('.popup__description'), advert.offer.description);
-    renderFeatures(card.querySelector('.popup__features'), advert.offer.features);
-    renderPhotos(card.querySelector('.popup__photos'), advert.offer.photos);
+    renderArray(card.querySelector('.popup__features'), advert.offer.features, renderFeaturesItem);
+    renderArray(card.querySelector('.popup__photos'), advert.offer.photos, renderPhotosItem);
 
     if (advert.author && advert.author.avatar) {
       card.querySelector('.popup__avatar').src = advert.author.avatar;
